@@ -1,6 +1,6 @@
-package com.replaymod.mixin;
+package tfar.heartshopmod.mixin;
 
-import com.replaymod.CommonClass;
+import tfar.heartshopmod.CommonClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;

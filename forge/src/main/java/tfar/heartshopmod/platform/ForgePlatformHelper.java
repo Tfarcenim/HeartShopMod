@@ -1,6 +1,6 @@
-package com.replaymod.platform;
+package tfar.heartshopmod.platform;
 
-import com.replaymod.platform.services.IPlatformHelper;
+import tfar.heartshopmod.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 

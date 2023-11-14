@@ -1,4 +1,4 @@
-package com.replaymod;
+package tfar.heartshopmod;
 
 import net.minecraftforge.fml.common.Mod;
 

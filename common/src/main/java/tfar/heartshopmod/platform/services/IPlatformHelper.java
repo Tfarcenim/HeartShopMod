@@ -1,4 +1,4 @@
-package com.replaymod.platform.services;
+package tfar.heartshopmod.platform.services;
 
 public interface IPlatformHelper {
 

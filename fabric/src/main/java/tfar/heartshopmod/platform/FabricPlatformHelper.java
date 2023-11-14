@@ -1,6 +1,6 @@
-package com.replaymod.platform;
+package tfar.heartshopmod.platform;
 
-import com.replaymod.platform.services.IPlatformHelper;
+import tfar.heartshopmod.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class FabricPlatformHelper implements IPlatformHelper {

@@ -1,7 +1,7 @@
-package com.replaymod.platform;
+package tfar.heartshopmod.platform;
 
-import com.replaymod.CommonClass;
-import com.replaymod.platform.services.IPlatformHelper;
+import tfar.heartshopmod.CommonClass;
+import tfar.heartshopmod.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
 

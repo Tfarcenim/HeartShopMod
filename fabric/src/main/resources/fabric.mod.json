@@ -16,7 +16,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.replaymod.ExampleMod"
+          "tfar.heartshopmod.ExampleMod"
         ]
     },
     "mixins": [

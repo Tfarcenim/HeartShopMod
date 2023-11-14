@@ -1,6 +1,6 @@
-package com.replaymod;
+package tfar.heartshopmod;
 
-import com.replaymod.platform.Services;
+import tfar.heartshopmod.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
