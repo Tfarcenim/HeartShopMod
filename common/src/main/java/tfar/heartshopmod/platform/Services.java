@@ -1,6 +1,6 @@
 package tfar.heartshopmod.platform;
 
-import tfar.heartshopmod.CommonClass;
+import tfar.heartshopmod.HeartShopMod;
 import tfar.heartshopmod.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
@@ -24,7 +24,7 @@ public class Services {
         final T loadedService = ServiceLoader.load(clazz)
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        CommonClass.LOG.debug("Loaded {} for service {}", loadedService, clazz);
+        HeartShopMod.LOG.debug("Loaded {} for service {}", loadedService, clazz);
         return loadedService;
     }
 }
