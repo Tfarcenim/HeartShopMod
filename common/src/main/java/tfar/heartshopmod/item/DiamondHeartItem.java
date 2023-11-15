@@ -9,7 +9,9 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import tfar.heartshopmod.CustomChestMenu;
 import tfar.heartshopmod.Init;
 
 public class DiamondHeartItem extends Item {
@@ -34,11 +36,17 @@ public class DiamondHeartItem extends Item {
     private static final Component CONTAINER_TITLE = Component.translatable("container.heartshop");
 
     public MenuProvider getMenuProvider(Level pLevel, BlockPos pPos) {
-        return new SimpleMenuProvider((i, p_52230_, player) -> new ChestMenu(MenuType.GENERIC_9x3,i, p_52230_,createInventory() ,3), CONTAINER_TITLE);
+        return new SimpleMenuProvider((i, p_52230_, player) -> new CustomChestMenu(MenuType.GENERIC_9x3,i, p_52230_,createInventory() ,3), CONTAINER_TITLE);
     }
 
-    public Container createInventory() {
-        SimpleContainer simpleContainer = new SimpleContainer(27);
+    public static Container createInventory() {
+        SimpleContainer simpleContainer = new SimpleContainer(27) {
+            @Override
+            public boolean canTakeItem(Container $$0, int $$1, ItemStack $$2) {
+                return false;
+            }
+        };
+
         simpleContainer.addItem(Init.HEART_GRENADE.getDefaultInstance());
         return simpleContainer;
     }
