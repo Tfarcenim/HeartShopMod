@@ -9,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.RegisterEvent;
@@ -30,9 +31,14 @@ public class HeartShopModForge {
         bus.addListener(Datagen::gather);
         if (FMLEnvironment.dist.isClient()) {
             bus.addListener(Client::renderer);
+            bus.addListener(this::client);
         }
 
         MinecraftForge.EVENT_BUS.addListener(this::onDeath);
+    }
+
+    private void client(FMLClientSetupEvent event) {
+        HeartShopModClient.setup();
     }
 
     private void onDeath(LivingDeathEvent event) {
@@ -50,5 +56,7 @@ public class HeartShopModForge {
         event.register(Registries.ITEM,new ResourceLocation(HeartShopMod.MOD_ID,"heart_grenade"),() -> Init.HEART_GRENADE);
 
         event.register(Registries.ENTITY_TYPE,new ResourceLocation(HeartShopMod.MOD_ID,"heart_grenade"),() -> Init.HEART_GRENADE_E);
+        event.register(Registries.MENU,new ResourceLocation(HeartShopMod.MOD_ID,"heart_shop"),() -> Init.HEART_SHOP);
+
     }
 }
