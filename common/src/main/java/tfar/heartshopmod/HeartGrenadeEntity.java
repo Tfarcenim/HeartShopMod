@@ -2,6 +2,7 @@ package tfar.heartshopmod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffect;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nullable;
@@ -85,22 +85,18 @@ public class HeartGrenadeEntity  extends ThrowableItemProjectile implements Item
     protected void onHit(HitResult $$0) {
         super.onHit($$0);
         if (!this.level().isClientSide) {
-            ItemStack $$1 = this.getItem();
-            Potion $$2 = PotionUtils.getPotion($$1);
-            List<MobEffectInstance> $$3 = PotionUtils.getMobEffects($$1);
+            ItemStack stack = this.getItem();
+            Potion $$2 = PotionUtils.getPotion(stack);
+            List<MobEffectInstance> $$3 = PotionUtils.getMobEffects(stack);
             boolean $$4 = $$2 == Potions.WATER && $$3.isEmpty();
             if ($$4) {
                 this.applyWater();
             } else if (!$$3.isEmpty()) {
-                if (true) {
-                    this.makeAreaOfEffectCloud($$1, $$2);
-                } else {
-                    this.applySplash($$3, $$0.getType() == HitResult.Type.ENTITY ? ((EntityHitResult)$$0).getEntity() : null);
-                }
+                this.makeAreaOfEffectCloud(stack, $$2);
             }
 
-            int $$5 = $$2.hasInstantEffects() ? 2007 : 2002;
-            this.level().levelEvent($$5, this.blockPosition(), PotionUtils.getColor($$1));
+        //    int $$5 = $$2.hasInstantEffects() ? 2007 : 2002;
+          //  this.level().levelEvent($$5, this.blockPosition(), PotionUtils.getColor(stack));
             this.discard();
         }
     }
@@ -161,29 +157,31 @@ public class HeartGrenadeEntity  extends ThrowableItemProjectile implements Item
         }
     }
 
-    private void makeAreaOfEffectCloud(ItemStack $$0, Potion $$1) {
-        AreaEffectCloud $$2 = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
+    private void makeAreaOfEffectCloud(ItemStack stack, Potion $$1) {
+        AreaEffectCloud cloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
         Entity $$3 = this.getOwner();
         if ($$3 instanceof LivingEntity) {
-            $$2.setOwner((LivingEntity)$$3);
+            cloud.setOwner((LivingEntity)$$3);
         }
 
-        $$2.setRadius(3.0F);
-        $$2.setRadiusOnUse(-0.5F);
-        $$2.setWaitTime(10);
-        $$2.setRadiusPerTick(-$$2.getRadius() / (float)$$2.getDuration());
-        $$2.setPotion($$1);
+        cloud.setRadius(3.0F);
+       // cloud.setRadiusOnUse(-0.5F);
+        cloud.setWaitTime(10);
+        cloud.setDuration(400);
+        //cloud.setRadiusPerTick(-cloud.getRadius() / (float)cloud.getDuration());
+        cloud.setPotion($$1);
+        cloud.setParticle(ParticleTypes.HEART);
 
-        for(MobEffectInstance $$4 : PotionUtils.getCustomEffects($$0)) {
-            $$2.addEffect(new MobEffectInstance($$4));
+        for(MobEffectInstance $$4 : PotionUtils.getCustomEffects(stack)) {
+            cloud.addEffect(new MobEffectInstance($$4));
         }
 
-        CompoundTag $$5 = $$0.getTag();
+        CompoundTag $$5 = stack.getTag();
         if ($$5 != null && $$5.contains("CustomPotionColor", 99)) {
-            $$2.setFixedColor($$5.getInt("CustomPotionColor"));
+            cloud.setFixedColor($$5.getInt("CustomPotionColor"));
         }
 
-        this.level().addFreshEntity($$2);
+        this.level().addFreshEntity(cloud);
     }
 
 
