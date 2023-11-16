@@ -5,22 +5,22 @@ import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.item.trading.MerchantOffers;
-import tfar.heartshopmod.item.DiamondHeartItem;
+import tfar.heartshopmod.shop.Shop;
+import tfar.heartshopmod.shop.ShopOffer;
+import tfar.heartshopmod.shop.ShopOffers;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
 
 public class ShopContainer implements Container {
-    private final DiamondHeartItem.Shop merchant;
+    private final Shop merchant;
     private final NonNullList<ItemStack> itemStacks;
     @Nullable
-    private MerchantOffer activeOffer;
+    private ShopOffer activeOffer;
     private int selectionHint;
     private int futureXp;
 
-    public ShopContainer(DiamondHeartItem.Shop $$0) {
+    public ShopContainer(Shop $$0) {
         this.itemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
         this.merchant = $$0;
     }
@@ -106,12 +106,12 @@ public class ShopContainer implements Container {
             this.setItem(2, ItemStack.EMPTY);
             this.futureXp = 0;
         } else {
-            MerchantOffers $$4 = this.merchant.getOffers();
-            if (!$$4.isEmpty()) {
-                MerchantOffer $$5 = $$4.getRecipeFor($$2, $$3, this.selectionHint);
+            ShopOffers shopOffers = this.merchant.getOffers();
+            if (!shopOffers.isEmpty()) {
+                ShopOffer $$5 = null;//shopOffers.getRecipeFor($$2, $$3, this.selectionHint);
                 if ($$5 == null || $$5.isOutOfStock()) {
                     this.activeOffer = $$5;
-                    $$5 = $$4.getRecipeFor($$3, $$2, this.selectionHint);
+                    $$5 = null;//shopOffers.getRecipeFor($$3, $$2, this.selectionHint);
                 }
 
                 if ($$5 != null && !$$5.isOutOfStock()) {
@@ -129,7 +129,7 @@ public class ShopContainer implements Container {
     }
 
     @Nullable
-    public MerchantOffer getActiveOffer() {
+    public ShopOffer getActiveOffer() {
         return this.activeOffer;
     }
 

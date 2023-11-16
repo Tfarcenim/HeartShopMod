@@ -4,15 +4,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.item.trading.MerchantOffers;
-import tfar.heartshopmod.item.DiamondHeartItem;
 
 import javax.annotation.Nullable;
 
-public class ClientSideShop implements DiamondHeartItem.Shop {
+public class ClientSideShop implements Shop {
     private final Player source;
-    private MerchantOffers offers = new MerchantOffers();
+    private ShopOffers offers = new ShopOffers();
     private int xp;
 
     public ClientSideShop(Player $$0) {
@@ -26,15 +23,15 @@ public class ClientSideShop implements DiamondHeartItem.Shop {
     public void setTradingPlayer(@Nullable Player $$0) {
     }
 
-    public MerchantOffers getOffers() {
+    public ShopOffers getOffers() {
         return this.offers;
     }
 
-    public void overrideOffers(MerchantOffers $$0) {
+    public void overrideOffers(ShopOffers $$0) {
         this.offers = $$0;
     }
 
-    public void notifyTrade(MerchantOffer $$0) {
+    public void notifyTrade(ShopOffer $$0) {
         $$0.increaseUses();
     }
 

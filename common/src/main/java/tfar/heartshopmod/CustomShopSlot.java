@@ -1,19 +1,18 @@
 package tfar.heartshopmod;
 
-import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.MerchantOffer;
-import tfar.heartshopmod.item.DiamondHeartItem;
+import tfar.heartshopmod.shop.Shop;
+import tfar.heartshopmod.shop.ShopOffer;
 
 public class CustomShopSlot extends Slot {
         private final ShopContainer slots;
         private final Player player;
         private int removeCount;
-        private final DiamondHeartItem.Shop merchant;
+        private final Shop merchant;
 
-        public CustomShopSlot(Player $$0, DiamondHeartItem.Shop $$1, ShopContainer $$2, int $$3, int $$4, int $$5) {
+        public CustomShopSlot(Player $$0, Shop $$1, ShopContainer $$2, int $$3, int $$4, int $$5) {
             super($$2, $$3, $$4, $$5);
             this.player = $$0;
             this.merchant = $$1;
@@ -44,11 +43,11 @@ public class CustomShopSlot extends Slot {
 
         public void onTake(Player $$0, ItemStack $$1) {
             this.checkTakeAchievements($$1);
-            MerchantOffer $$2 = this.slots.getActiveOffer();
+            ShopOffer $$2 = this.slots.getActiveOffer();
             if ($$2 != null) {
                 ItemStack $$3 = this.slots.getItem(0);
                 ItemStack $$4 = this.slots.getItem(1);
-                if ($$2.take($$3, $$4) || $$2.take($$4, $$3)) {
+                if ($$2.take(player)) {
                     this.merchant.notifyTrade($$2);
                     this.slots.setItem(0, $$3);
                     this.slots.setItem(1, $$4);

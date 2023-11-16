@@ -11,14 +11,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraftforge.api.distmarker.Dist;
-
-
 import net.minecraftforge.api.distmarker.OnlyIn;
+import tfar.heartshopmod.shop.ShopOffer;
+import tfar.heartshopmod.shop.ShopOffers;
 
 public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     /**
@@ -62,7 +60,6 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
 
     private void postButtonClick() {
         this.menu.setSelectionHint(this.shopItem);
-        this.menu.tryMoveItems(this.shopItem);
         this.minecraft.getConnection().send(new ServerboundSelectTradePacket(this.shopItem));
     }
 
@@ -98,14 +95,14 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
         pGuiGraphics.blit(VILLAGER_LOCATION, i, j, 0, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 512, 256);
-        MerchantOffers merchantoffers = this.menu.getOffers();
+        ShopOffers merchantoffers = this.menu.getOffers();
         if (!merchantoffers.isEmpty()) {
             int k = this.shopItem;
             if (k < 0 || k >= merchantoffers.size()) {
                 return;
             }
 
-            MerchantOffer merchantoffer = merchantoffers.get(k);
+            ShopOffer merchantoffer = merchantoffers.get(k);
             if (merchantoffer.isOutOfStock()) {
                 pGuiGraphics.blit(VILLAGER_LOCATION, this.leftPos + 83 + 99, this.topPos + 35, 0, 311.0F, 0.0F, 28, 21, 512, 256);
             }
@@ -134,7 +131,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         }
     }
 
-    private void renderScroller(GuiGraphics pGuiGraphics, int pPosX, int pPosY, MerchantOffers pMerchantOffers) {
+    private void renderScroller(GuiGraphics pGuiGraphics, int pPosX, int pPosY, ShopOffers pMerchantOffers) {
         int i = pMerchantOffers.size() + 1 - 7;
         if (i > 1) {
             int j = 139 - (27 + (i - 1) * 139 / i);
@@ -155,7 +152,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         this.renderBackground(pGuiGraphics);
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        MerchantOffers merchantoffers = this.menu.getOffers();
+        ShopOffers merchantoffers = this.menu.getOffers();
         if (!merchantoffers.isEmpty()) {
             int i = (this.width - this.imageWidth) / 2;
             int j = (this.height - this.imageHeight) / 2;
@@ -164,20 +161,14 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
             this.renderScroller(pGuiGraphics, i, j, merchantoffers);
             int i1 = 0;
 
-            for (MerchantOffer merchantoffer : merchantoffers) {
+            for (ShopOffer merchantoffer : merchantoffers) {
                 if (!this.canScroll(merchantoffers.size()) || i1 >= this.scrollOff && i1 < 7 + this.scrollOff) {
-                    ItemStack itemstack = merchantoffer.getBaseCostA();
-                    ItemStack itemstack1 = merchantoffer.getCostA();
-                    ItemStack itemstack2 = merchantoffer.getCostB();
+                    int itemstack = merchantoffer.getCost();
                     ItemStack itemstack3 = merchantoffer.getResult();
                     pGuiGraphics.pose().pushPose();
                     pGuiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
                     int j1 = k + 2;
-                    this.renderAndDecorateCostA(pGuiGraphics, itemstack1, itemstack, l, j1);
-                    if (!itemstack2.isEmpty()) {
-                        pGuiGraphics.renderFakeItem(itemstack2, i + 5 + 35, j1);
-                        pGuiGraphics.renderItemDecorations(this.font, itemstack2, i + 5 + 35, j1);
-                    }
+                    this.renderAndDecorateCostA(pGuiGraphics,itemstack, l, j1);
 
                     this.renderButtonArrows(pGuiGraphics, merchantoffer, i, j1);
                     pGuiGraphics.renderFakeItem(itemstack3, i + 5 + 68, j1);
@@ -191,7 +182,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
             }
 
             int k1 = this.shopItem;
-            MerchantOffer merchantoffer1 = merchantoffers.get(k1);
+            ShopOffer merchantoffer1 = merchantoffers.get(k1);
 
             if (merchantoffer1.isOutOfStock() && this.isHovering(186, 35, 22, 21, pMouseX, pMouseY) && this.menu.canRestock()) {
                 pGuiGraphics.renderTooltip(this.font, DEPRECATED_TOOLTIP, pMouseX, pMouseY);
@@ -211,7 +202,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         this.renderTooltip(pGuiGraphics, pMouseX, pMouseY);
     }
 
-    private void renderButtonArrows(GuiGraphics pGuiGraphics, MerchantOffer pMerchantOffers, int pPosX, int pPosY) {
+    private void renderButtonArrows(GuiGraphics pGuiGraphics, ShopOffer pMerchantOffers, int pPosX, int pPosY) {
         RenderSystem.enableBlend();
         if (pMerchantOffers.isOutOfStock()) {
             pGuiGraphics.blit(VILLAGER_LOCATION, pPosX + 5 + 35 + 20, pPosY + 3, 0, 25.0F, 171.0F, 10, 9, 512, 256);
@@ -221,23 +212,9 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
 
     }
 
-    private void renderAndDecorateCostA(GuiGraphics pGuiGraphics, ItemStack pRealCost, ItemStack pBaseCost, int pX, int pY) {
-        pGuiGraphics.renderFakeItem(pRealCost, pX, pY);
-        if (pBaseCost.getCount() == pRealCost.getCount()) {
-            pGuiGraphics.renderItemDecorations(this.font, pRealCost, pX, pY);
-        } else {
-            pGuiGraphics.renderItemDecorations(this.font, pBaseCost, pX, pY, pBaseCost.getCount() == 1 ? "1" : null);
-            // Forge: fixes Forge-8806, code for count rendering taken from GuiGraphics#renderGuiItemDecorations
-            pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
-            String count = pRealCost.getCount() == 1 ? "1" : String.valueOf(pRealCost.getCount());
-            font.drawInBatch(count, (float) (pX + 14) + 19 - 2 - font.width(count), (float) pY + 6 + 3, 0xFFFFFF, true, pGuiGraphics.pose().last().pose(), pGuiGraphics.bufferSource(), net.minecraft.client.gui.Font.DisplayMode.NORMAL, 0, 15728880, false);
-            pGuiGraphics.pose().popPose();
-            pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(0.0F, 0.0F, 300.0F);
-            pGuiGraphics.blit(VILLAGER_LOCATION, pX + 7, pY + 12, 0, 0.0F, 176.0F, 9, 2, 512, 256);
-            pGuiGraphics.pose().popPose();
-        }
+    private void renderAndDecorateCostA(GuiGraphics pGuiGraphics, int pRealCost, int pX, int pY) {
+     //   pGuiGraphics.renderFakeItem(pRealCost, pX, pY);
+      //  pGuiGraphics.renderItemDecorations(this.font, pRealCost, pX, pY);
 
     }
 
@@ -298,13 +275,9 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         public void renderToolTip(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
             if (this.isHovered && CustomShopScreen.this.menu.getOffers().size() > this.index + CustomShopScreen.this.scrollOff) {
                 if (pMouseX < this.getX() + 20) {
-                    ItemStack itemstack = CustomShopScreen.this.menu.getOffers().get(this.index + CustomShopScreen.this.scrollOff).getCostA();
+                    ItemStack itemstack = ItemStack.EMPTY;//CustomShopScreen.this.menu.getOffers().get(this.index + CustomShopScreen.this.scrollOff).getCostA();
                     pGuiGraphics.renderTooltip(CustomShopScreen.this.font, itemstack, pMouseX, pMouseY);
                 } else if (pMouseX < this.getX() + 50 && pMouseX > this.getX() + 30) {
-                    ItemStack itemstack2 = CustomShopScreen.this.menu.getOffers().get(this.index + CustomShopScreen.this.scrollOff).getCostB();
-                    if (!itemstack2.isEmpty()) {
-                        pGuiGraphics.renderTooltip(CustomShopScreen.this.font, itemstack2, pMouseX, pMouseY);
-                    }
                 } else if (pMouseX > this.getX() + 65) {
                     ItemStack itemstack1 = CustomShopScreen.this.menu.getOffers().get(this.index + CustomShopScreen.this.scrollOff).getResult();
                     pGuiGraphics.renderTooltip(CustomShopScreen.this.font, itemstack1, pMouseX, pMouseY);

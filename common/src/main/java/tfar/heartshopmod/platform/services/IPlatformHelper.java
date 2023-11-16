@@ -1,5 +1,9 @@
 package tfar.heartshopmod.platform.services;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.trading.MerchantOffers;
+import tfar.heartshopmod.shop.ShopOffers;
+
 public interface IPlatformHelper {
 
     /**
@@ -33,4 +37,8 @@ public interface IPlatformHelper {
 
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+
+    void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, int pVillagerXp, boolean pShowProgress, boolean pCanRestock);
+
 }

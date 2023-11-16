@@ -1,13 +1,24 @@
 package tfar.heartshopmod.net;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.IndexedMessageCodec;
 import net.minecraftforge.network.simple.SimpleChannel;
 import tfar.heartshopmod.HeartShopMod;
+import tfar.heartshopmod.net.util.PacketHelper;
+import tfar.heartshopmod.shop.ShopOffers;
+
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PacketHandler {
 
@@ -20,14 +31,14 @@ public class PacketHandler {
         int i = 0;
 
         INSTANCE.registerMessage(i++,
-                S2CContentsForDisplayPacket.class,
-                S2CContentsForDisplayPacket::encode,
-                S2CContentsForDisplayPacket::new,
-                S2CContentsForDisplayPacket::handle);
+                S2CShopOffersPacket.class,
+                S2CShopOffersPacket::encode,
+                S2CShopOffersPacket::new,
+                S2CShopOffersPacket::handle);
     }
 
-    public static void sendContentsForDisplay(ServerPlayer player, NonNullList<ItemStack> stacks) {
-        sendToClient(new S2CContentsForDisplayPacket(stacks),player);
+    public static void sendContentsForDisplay(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, int pVillagerXp, boolean pShowProgress, boolean pCanRestock) {
+        sendToClient(new S2CShopOffersPacket(pContainerId, pOffers, pVillagerLevel, pVillagerXp, pShowProgress, pCanRestock),player);
     }
 
     public static <MSG> void sendToClient(MSG packet, ServerPlayer player) {

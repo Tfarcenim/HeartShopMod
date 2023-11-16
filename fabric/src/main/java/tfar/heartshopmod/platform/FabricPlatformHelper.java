@@ -1,7 +1,9 @@
 package tfar.heartshopmod.platform;
 
+import net.minecraft.server.level.ServerPlayer;
 import tfar.heartshopmod.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import tfar.heartshopmod.shop.ShopOffers;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -20,5 +22,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public boolean isDevelopmentEnvironment() {
 
         return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
+
+    @Override
+    public void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, int pVillagerXp, boolean pShowProgress, boolean pCanRestock) {
+
     }
 }

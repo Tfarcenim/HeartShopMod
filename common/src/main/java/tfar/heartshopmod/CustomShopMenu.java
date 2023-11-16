@@ -9,9 +9,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.MerchantOffers;
-import tfar.heartshopmod.item.DiamondHeartItem;
+import tfar.heartshopmod.shop.Shop;
 import tfar.heartshopmod.shop.ClientSideShop;
+import tfar.heartshopmod.shop.ShopOffers;
 
 public class CustomShopMenu extends AbstractContainerMenu {
         protected static final int PAYMENT1_SLOT = 0;
@@ -25,7 +25,7 @@ public class CustomShopMenu extends AbstractContainerMenu {
         private static final int SELLSLOT2_X = 162;
         private static final int BUYSLOT_X = 220;
         private static final int ROW_Y = 37;
-        private final DiamondHeartItem.Shop trader;
+        private final Shop trader;
         private final ShopContainer tradeContainer;
         private int merchantLevel;
         private boolean canRestock;
@@ -34,7 +34,7 @@ public class CustomShopMenu extends AbstractContainerMenu {
             this(pContainerId, pPlayerInventory, new ClientSideShop(pPlayerInventory.player));
         }
 
-        public CustomShopMenu(int pContainerId, Inventory pPlayerInventory, DiamondHeartItem.Shop pTrader) {
+        public CustomShopMenu(int pContainerId, Inventory pPlayerInventory, Shop pTrader) {
             super(Init.HEART_SHOP, pContainerId);
             this.trader = pTrader;
             this.tradeContainer = new ShopContainer(pTrader);
@@ -185,36 +185,6 @@ public class CustomShopMenu extends AbstractContainerMenu {
             }
         }
 
-        public void tryMoveItems(int pSelectedMerchantRecipe) {
-            if (pSelectedMerchantRecipe >= 0 && this.getOffers().size() > pSelectedMerchantRecipe) {
-                ItemStack itemstack = this.tradeContainer.getItem(0);
-                if (!itemstack.isEmpty()) {
-                    if (!this.moveItemStackTo(itemstack, 3, 39, true)) {
-                        return;
-                    }
-
-                    this.tradeContainer.setItem(0, itemstack);
-                }
-
-                ItemStack itemstack1 = this.tradeContainer.getItem(1);
-                if (!itemstack1.isEmpty()) {
-                    if (!this.moveItemStackTo(itemstack1, 3, 39, true)) {
-                        return;
-                    }
-
-                    this.tradeContainer.setItem(1, itemstack1);
-                }
-
-                if (this.tradeContainer.getItem(0).isEmpty() && this.tradeContainer.getItem(1).isEmpty()) {
-                    ItemStack itemstack2 = this.getOffers().get(pSelectedMerchantRecipe).getCostA();
-                    this.moveFromInventoryToPaymentSlot(0, itemstack2);
-                    ItemStack itemstack3 = this.getOffers().get(pSelectedMerchantRecipe).getCostB();
-                    this.moveFromInventoryToPaymentSlot(1, itemstack3);
-                }
-
-            }
-        }
-
         private void moveFromInventoryToPaymentSlot(int pPaymentSlotIndex, ItemStack pPaymentSlot) {
             if (!pPaymentSlot.isEmpty()) {
                 for(int i = 3; i < 39; ++i) {
@@ -241,11 +211,11 @@ public class CustomShopMenu extends AbstractContainerMenu {
          * {@link net.minecraft.client.multiplayer.ClientPacketListener} uses this to set offers for the client side
          * MerchantContainer.
          */
-        public void setOffers(MerchantOffers pOffers) {
+        public void setOffers(ShopOffers pOffers) {
             this.trader.overrideOffers(pOffers);
         }
 
-        public MerchantOffers getOffers() {
+        public ShopOffers getOffers() {
             return this.trader.getOffers();
         }
     }
