@@ -28,9 +28,6 @@ public class ShopOffers extends ArrayList<ShopOffer> {
         pBuffer.writeCollection(this, (buf, shopOffer) -> {
             buf.writeInt(shopOffer.getCost());
             buf.writeItem(shopOffer.getResult());
-            buf.writeBoolean(shopOffer.isOutOfStock());
-            buf.writeInt(shopOffer.getUses());
-            buf.writeInt(shopOffer.getMaxUses());
             buf.writeInt(shopOffer.getXp());
             buf.writeInt(shopOffer.getSpecialPriceDiff());
             buf.writeFloat(shopOffer.getPriceMultiplier());
@@ -42,17 +39,11 @@ public class ShopOffers extends ArrayList<ShopOffer> {
         return pBuffer.readCollection(ShopOffers::new, (buf) -> {
             int costA = buf.readInt();
             ItemStack result = buf.readItem();
-            boolean flag = buf.readBoolean();
-            int i = buf.readInt();
-            int j = buf.readInt();
             int k = buf.readInt();
             int l = buf.readInt();
             float f = buf.readFloat();
             int i1 = buf.readInt();
-            ShopOffer merchantoffer = new ShopOffer(costA, result, i, j, k, f, i1);
-            if (flag) {
-                merchantoffer.setToOutOfStock();
-            }
+            ShopOffer merchantoffer = new ShopOffer(costA, result, k, f, i1);
 
             merchantoffer.setSpecialPriceDiff(l);
             return merchantoffer;

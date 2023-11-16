@@ -27,9 +27,6 @@ public class CustomShopMenu extends AbstractContainerMenu {
         private static final int ROW_Y = 37;
         private final Shop trader;
         private final ShopContainer tradeContainer;
-        private int merchantLevel;
-        private boolean canRestock;
-
         public CustomShopMenu(int pContainerId, Inventory pPlayerInventory) {
             this(pContainerId, pPlayerInventory, new ClientSideShop(pPlayerInventory.player));
         }
@@ -71,33 +68,6 @@ public class CustomShopMenu extends AbstractContainerMenu {
             return this.trader.getTradingPlayer() == pPlayer;
         }
 
-        public int getTraderXp() {
-            return this.trader.getVillagerXp();
-        }
-
-        public int getFutureTraderXp() {
-            return this.tradeContainer.getFutureXp();
-        }
-
-        public void setXp(int pXp) {
-            this.trader.overrideXp(pXp);
-        }
-
-        public int getTraderLevel() {
-            return this.merchantLevel;
-        }
-
-        public void setMerchantLevel(int pLevel) {
-            this.merchantLevel = pLevel;
-        }
-
-        public void setCanRestock(boolean pCanRestock) {
-            this.canRestock = pCanRestock;
-        }
-
-        public boolean canRestock() {
-            return this.canRestock;
-        }
 
         /**
          * Called to determine if the current slot is valid for the stack merging (double-click) code. The stack passed in is

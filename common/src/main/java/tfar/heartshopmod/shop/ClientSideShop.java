@@ -32,7 +32,6 @@ public class ClientSideShop implements Shop {
     }
 
     public void notifyTrade(ShopOffer $$0) {
-        $$0.increaseUses();
     }
 
     public void notifyTradeUpdated(ItemStack $$0) {

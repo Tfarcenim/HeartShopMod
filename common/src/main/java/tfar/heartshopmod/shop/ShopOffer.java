@@ -13,8 +13,6 @@ public class ShopOffer {
 
 
     private final ItemStack result;
-    private int uses;
-    private final int maxUses;
     private int specialPriceDiff;
     private int demand;
     private float priceMultiplier;
@@ -23,13 +21,6 @@ public class ShopOffer {
     public ShopOffer(CompoundTag pCompoundTag) {
         this.heartCost = pCompoundTag.getInt("buy");
         this.result = ItemStack.of(pCompoundTag.getCompound("sell"));
-        this.uses = pCompoundTag.getInt("uses");
-        if (pCompoundTag.contains("maxUses", 99)) {
-            this.maxUses = pCompoundTag.getInt("maxUses");
-        } else {
-            this.maxUses = 4;
-        }
-
         if (pCompoundTag.contains("xp", 3)) {
             this.xp = pCompoundTag.getInt("xp");
         }
@@ -42,11 +33,10 @@ public class ShopOffer {
         this.demand = pCompoundTag.getInt("demand");
     }
 
-    public ShopOffer(int heartCost, ItemStack pResult, int pUses, int pMaxUses, int pXp, float pPriceMultiplier, int pDemand) {
+    public ShopOffer(int heartCost, ItemStack pResult, int pXp, float pPriceMultiplier, int pDemand) {
         this.heartCost = heartCost;
         this.result = pResult;
-        this.uses = pUses;
-        this.maxUses = pMaxUses;
+
         this.xp = pXp;
         this.priceMultiplier = pPriceMultiplier;
         this.demand = pDemand;
@@ -61,31 +51,8 @@ public class ShopOffer {
         return this.result;
     }
 
-    /**
-     * Calculates the demand with following formula: demand = demand + uses - maxUses - uses
-     */
-    public void updateDemand() {
-        this.demand = this.demand + this.uses - (this.maxUses - this.uses);
-    }
-
     public ItemStack assemble() {
         return this.result.copy();
-    }
-
-    public int getUses() {
-        return this.uses;
-    }
-
-    public void resetUses() {
-        this.uses = 0;
-    }
-
-    public int getMaxUses() {
-        return this.maxUses;
-    }
-
-    public void increaseUses() {
-        ++this.uses;
     }
 
     public int getDemand() {
@@ -116,21 +83,11 @@ public class ShopOffer {
         return this.xp;
     }
 
-    public boolean isOutOfStock() {
-        return this.uses >= this.maxUses;
-    }
-
-    public void setToOutOfStock() {
-        this.uses = this.maxUses;
-    }
-
 
     public CompoundTag createTag() {
         CompoundTag compoundtag = new CompoundTag();
         compoundtag.putInt("buy", heartCost);
         compoundtag.put("sell", this.result.save(new CompoundTag()));
-        compoundtag.putInt("uses", this.uses);
-        compoundtag.putInt("maxUses", this.maxUses);
         compoundtag.putInt("xp", this.xp);
         compoundtag.putFloat("priceMultiplier", this.priceMultiplier);
         compoundtag.putInt("specialPrice", this.specialPriceDiff);

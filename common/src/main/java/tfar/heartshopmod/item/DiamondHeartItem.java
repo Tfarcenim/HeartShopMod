@@ -96,7 +96,7 @@ public class DiamondHeartItem extends Item {
 
     public static ShopOffers createOffers() {
         ShopOffers shopOffers = new ShopOffers();
-        ShopOffer shopOffer = new ShopOffer(1, Init.HEART_GRENADE.getDefaultInstance(),11,11,0,0,0);
+        ShopOffer shopOffer = new ShopOffer(1, Init.HEART_GRENADE.getDefaultInstance(), 0,0,0);
         shopOffers.add(shopOffer);
         return shopOffers;
     }

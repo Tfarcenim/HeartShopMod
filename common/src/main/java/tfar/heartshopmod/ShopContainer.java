@@ -109,12 +109,12 @@ public class ShopContainer implements Container {
             ShopOffers shopOffers = this.merchant.getOffers();
             if (!shopOffers.isEmpty()) {
                 ShopOffer $$5 = null;//shopOffers.getRecipeFor($$2, $$3, this.selectionHint);
-                if ($$5 == null || $$5.isOutOfStock()) {
+                if ($$5 == null) {
                     this.activeOffer = $$5;
                     $$5 = null;//shopOffers.getRecipeFor($$3, $$2, this.selectionHint);
                 }
 
-                if ($$5 != null && !$$5.isOutOfStock()) {
+                if ($$5 != null) {
                     this.activeOffer = $$5;
                     this.setItem(2, $$5.assemble());
                     this.futureXp = $$5.getXp();

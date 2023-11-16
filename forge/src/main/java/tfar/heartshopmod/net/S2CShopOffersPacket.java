@@ -53,9 +53,6 @@ public class S2CShopOffersPacket implements S2CPacketHelper {
         AbstractContainerMenu abstractcontainermenu = minecraft.player.containerMenu;
         if (containerId == abstractcontainermenu.containerId && abstractcontainermenu instanceof CustomShopMenu shopMenu) {
             shopMenu.setOffers(new ShopOffers(offers.createTag()));
-            shopMenu.setXp(villagerXp);
-            shopMenu.setMerchantLevel(villagerLevel);
-            shopMenu.setCanRestock(canRestock);
         }
     }
 }
