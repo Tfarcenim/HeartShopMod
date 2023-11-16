@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import tfar.heartshopmod.shop.Shop;
 import tfar.heartshopmod.shop.ClientSideShop;
+import tfar.heartshopmod.shop.ShopOffer;
 import tfar.heartshopmod.shop.ShopOffers;
 
 public class CustomShopMenu extends AbstractContainerMenu {
@@ -88,25 +89,45 @@ public class CustomShopMenu extends AbstractContainerMenu {
         if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
-            if (pIndex == 2) {
-                if (!this.moveItemStackTo(itemstack1, 3, 39, true)) {
-                    return ItemStack.EMPTY;
-                }
+            if (pIndex == 0) {
+                ShopOffer shopOffer = getTradeContainer().getActiveOffer();
 
-                slot.onQuickCraft(itemstack1, itemstack);
-                this.playTradeSound();
-            } else if (pIndex != 0 && pIndex != 1) {
-                if (pIndex >= 3 && pIndex < 30) {
-                    if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
+                if (shopOffer != null) {
+                    ItemStack purchase = itemstack1.copy();
+                    PlayerDuck playerDuck = (PlayerDuck) pPlayer;
+                    int maxAffordable = playerDuck.getHeartCurrency() / shopOffer.getCost();
+
+                    int maxCount = Math.min(maxAffordable,purchase.getMaxStackSize());
+
+                    if (maxCount <=0) return ItemStack.EMPTY;
+                    purchase.setCount(maxCount);
+
+                    ItemStack purchaseCopy = purchase.copy();
+
+                    //returns if nothing could be transferred
+                    if (!this.moveItemStackTo(purchaseCopy, 1, 37, true)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (pIndex >= 30 && pIndex < 39 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
+                    //some purchase is left over
+
+                    int purchased = purchase.getCount() - purchaseCopy.getCount();
+                    int heartCost = purchased * shopOffer.getCost();
+                    playerDuck.addHeartCurrency(-heartCost);
+
+
+                    //slot.onQuickCraft(itemstack1, itemstack);
+                    this.playTradeSound();
+                }
+                return ItemStack.EMPTY;
+            } else {
+                if (pIndex >= 1 && pIndex < 28) {
+                    if (!this.moveItemStackTo(itemstack1, 28, 39-2, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (pIndex >= 30-2 && pIndex < 39-2 && !this.moveItemStackTo(itemstack1, 3-2, 30-2, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
-                return ItemStack.EMPTY;
             }
-
             if (itemstack1.isEmpty()) {
                 slot.setByPlayer(ItemStack.EMPTY);
             } else {
@@ -125,7 +146,7 @@ public class CustomShopMenu extends AbstractContainerMenu {
 
     private void playTradeSound() {
         if (!this.trader.isClientSide()) {
-            Entity entity = (Entity) this.trader;
+            Entity entity = trader.getTradingPlayer();
             entity.level().playLocalSound(entity.getX(), entity.getY(), entity.getZ(), this.trader.getNotifyTradeSound(), SoundSource.NEUTRAL, 1.0F, 1.0F, false);
         }
 
@@ -137,23 +158,6 @@ public class CustomShopMenu extends AbstractContainerMenu {
     public void removed(Player pPlayer) {
         super.removed(pPlayer);
         this.trader.setTradingPlayer(null);
-        if (!this.trader.isClientSide()) {
-            if (!pPlayer.isAlive() || pPlayer instanceof ServerPlayer && ((ServerPlayer) pPlayer).hasDisconnected()) {
-                ItemStack itemstack = this.tradeContainer.removeItemNoUpdate(0);
-                if (!itemstack.isEmpty()) {
-                    pPlayer.drop(itemstack, false);
-                }
-
-                itemstack = this.tradeContainer.removeItemNoUpdate(1);
-                if (!itemstack.isEmpty()) {
-                    pPlayer.drop(itemstack, false);
-                }
-            } else if (pPlayer instanceof ServerPlayer) {
-                pPlayer.getInventory().placeItemBackInInventory(this.tradeContainer.removeItemNoUpdate(0));
-                pPlayer.getInventory().placeItemBackInInventory(this.tradeContainer.removeItemNoUpdate(1));
-            }
-
-        }
     }
 
     private void moveFromInventoryToPaymentSlot(int pPaymentSlotIndex, ItemStack pPaymentSlot) {

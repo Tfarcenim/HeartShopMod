@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -40,6 +41,11 @@ public class HeartShopModForge {
 
         MinecraftForge.EVENT_BUS.addListener(this::onDeath);
         MinecraftForge.EVENT_BUS.addListener(this::clonePlayer);
+        MinecraftForge.EVENT_BUS.addListener(this::commands);
+    }
+
+    private void commands(RegisterCommandsEvent event) {
+        ModCommands.register(event.getDispatcher());
     }
 
     private void clonePlayer(PlayerEvent.Clone event) {

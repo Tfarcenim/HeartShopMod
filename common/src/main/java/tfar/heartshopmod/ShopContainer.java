@@ -16,7 +16,7 @@ public class ShopContainer implements Container {
     private final NonNullList<ItemStack> itemStacks;
     @Nullable
     private ShopOffer activeOffer;
-    private int trade;
+    private int trade = -1;
 
     public ShopContainer(Shop $$0) {
         this.itemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
@@ -45,13 +45,13 @@ public class ShopContainer implements Container {
     }
 
     public ItemStack removeItem(int $$0, int $$1) {
-        ItemStack $$2 = this.itemStacks.get($$0);
-        if ($$0 == 2 && !$$2.isEmpty()) {
-            return ContainerHelper.removeItem(this.itemStacks, $$0, $$2.getCount());
-        } else {
-            ItemStack $$3 = ContainerHelper.removeItem(this.itemStacks, $$0, $$1);
-            return $$3;
-        }
+        ItemStack stack = this.itemStacks.get($$0);
+      //  if ($$0 == 2 && !stack.isEmpty()) {
+     //       return ContainerHelper.removeItem(this.itemStacks, $$0, stack.getCount());
+    //    } else {
+   //         ItemStack $$3 = ContainerHelper.removeItem(this.itemStacks, $$0, $$1);
+   //         return $$3;
+        return stack.copy();
     }
 
     public ItemStack removeItemNoUpdate(int $$0) {
@@ -70,12 +70,11 @@ public class ShopContainer implements Container {
     }
 
     public void setChanged() {
-        this.updateSellItem();
     }
 
     public void updateSellItem() {
-        this.activeOffer = null;
-        ItemStack itemStack = itemStacks.get(trade);
+        this.activeOffer = shop.getOffers().get(trade);
+        ItemStack itemStack = activeOffer.assemble();
         setItem(0,itemStack);
     }
 

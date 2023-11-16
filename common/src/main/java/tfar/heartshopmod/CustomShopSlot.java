@@ -38,8 +38,12 @@ public class CustomShopSlot extends Slot {
 
     @Override
     public boolean mayPickup(Player player) {
-
-        return super.mayPickup(player);
+        PlayerDuck playerDuck = (PlayerDuck) player;
+        ShopOffer shopOffer = slots.getActiveOffer();
+        if (shopOffer != null) {
+            return shopOffer.getCost() <= playerDuck.getHeartCurrency();
+        }
+        return false;
     }
 
     protected void checkTakeAchievements(ItemStack $$0) {
@@ -47,13 +51,12 @@ public class CustomShopSlot extends Slot {
         this.removeCount = 0;
     }
 
-    public void onTake(Player $$0, ItemStack $$1) {
-        this.checkTakeAchievements($$1);
-        ShopOffer $$2 = this.slots.getActiveOffer();
-        if ($$2 != null) {
-            if ($$2.take(player)) {
-                this.merchant.notifyTrade($$2);
-            }
+    public void onTake(Player player, ItemStack $$1) {
+        ShopOffer shopOffer = slots.getActiveOffer();
+        if (shopOffer != null && !player.level().isClientSide) {
+            PlayerDuck playerDuck = (PlayerDuck) player;
+            int heartCost = $$1.getCount() * shopOffer.getCost();
+            playerDuck.addHeartCurrency(-heartCost);
         }
     }
 }

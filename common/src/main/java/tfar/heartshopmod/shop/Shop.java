@@ -47,7 +47,6 @@ public interface Shop {
                 Services.PLATFORM.sendShopOffers((ServerPlayer) pPlayer,optionalint.getAsInt(), shopOffers, pLevel,this.showProgressBar(), this.canRestock());
             }
         }
-
     }
 
 
