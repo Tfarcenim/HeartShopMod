@@ -20,7 +20,7 @@ public class HeartSummonerItem extends Item {
         this.level = level;
     }
 
-    int delay = 20;
+    int delay = 30;
 
     /**
      * Called each tick as long the item is in a player's inventory. Used by maps to check if it's in a player's hand and
@@ -29,10 +29,21 @@ public class HeartSummonerItem extends Item {
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
          if (pIsSelected && !pLevel.isClientSide) {
              if (pLevel.getGameTime() % delay == 0) {
-                 List<EntityType<?>> entityTypes = BuiltInRegistries.ENTITY_TYPE.stream()
-                         .filter(entityType -> entityType.getCategory() == MobCategory.CREATURE).toList();
-                 EntityType<?> type = entityTypes.get(pLevel.getRandom().nextInt(entityTypes.size()));
-                 Entity entity = type.spawn((ServerLevel) pLevel,pEntity.blockPosition(), MobSpawnType.SPAWNER);
+
+                 switch (level) {
+                     case 1 -> {
+                         List<EntityType<?>> entityTypes = BuiltInRegistries.ENTITY_TYPE.stream()
+                                 .filter(entityType -> entityType.getCategory() == MobCategory.CREATURE).toList();
+                         EntityType<?> type = entityTypes.get(pLevel.getRandom().nextInt(entityTypes.size()));
+                         Entity entity = type.spawn((ServerLevel) pLevel,pEntity.blockPosition(), MobSpawnType.SPAWNER);
+                     }
+                     case 2-> {
+                         List<EntityType<?>> entityTypes = BuiltInRegistries.ENTITY_TYPE.stream()
+                                 .filter(entityType -> entityType.getCategory() == MobCategory.MONSTER).toList();
+                         EntityType<?> type = entityTypes.get(pLevel.getRandom().nextInt(entityTypes.size()));
+                         Entity entity = type.spawn((ServerLevel) pLevel,pEntity.blockPosition(), MobSpawnType.SPAWNER);
+                     }
+                 }
              }
          }
     }

@@ -1,5 +1,7 @@
 package tfar.heartshopmod.item;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -14,8 +16,8 @@ import tfar.heartshopmod.entity.HeartGrenadeEntity;
 
 import java.util.List;
 
-public class HeartGrenadeItem extends Item {
-    public HeartGrenadeItem(Properties $$0) {
+public class EndTeleporterItem extends Item {
+    public EndTeleporterItem(Properties $$0) {
         super($$0);
     }
 
@@ -23,20 +25,14 @@ public class HeartGrenadeItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
         if (!pLevel.isClientSide) {
-            HeartGrenadeEntity heartGrenade = new HeartGrenadeEntity(pLevel, pPlayer);
-
-            ItemStack dummyPotion = getDefaultInstance();
-            PotionUtils.setCustomEffects(dummyPotion, List.of(new MobEffectInstance(MobEffects.HARM)));
-
-            heartGrenade.setItem(dummyPotion);
-            heartGrenade.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), -20.0F, 0.5F, 1.0F);
-            pLevel.addFreshEntity(heartGrenade);
+            ResourceKey<Level> resourcekey = pLevel.dimension() == Level.END ? Level.OVERWORLD : Level.END;
+            ServerLevel serverlevel = ((ServerLevel)pLevel).getServer().getLevel(resourcekey);
+            if (serverlevel != null) {
+                pPlayer.changeDimension(serverlevel);
+            }
         }
 
         pPlayer.awardStat(Stats.ITEM_USED.get(this));
-        if (!pPlayer.getAbilities().instabuild) {
-            itemstack.shrink(1);
-        }
 
         return InteractionResultHolder.sidedSuccess(itemstack, pLevel.isClientSide());
     }

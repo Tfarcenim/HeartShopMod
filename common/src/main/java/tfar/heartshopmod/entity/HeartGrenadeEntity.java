@@ -1,4 +1,4 @@
-package tfar.heartshopmod;
+package tfar.heartshopmod.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
