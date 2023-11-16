@@ -69,16 +69,6 @@ public class DiamondHeartItem extends Item {
         }
 
         @Override
-        public int getVillagerXp() {
-            return 0;
-        }
-
-        @Override
-        public void overrideXp(int i) {
-
-        }
-
-        @Override
         public boolean showProgressBar() {
             return false;
         }
@@ -101,5 +91,5 @@ public class DiamondHeartItem extends Item {
         return shopOffers;
     }
 
-    private static final Component CONTAINER_TITLE = Component.translatable("container.heartshop");
+    private static final Component CONTAINER_TITLE = Component.translatable("container.heart_shop");
 }

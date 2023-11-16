@@ -29,9 +29,7 @@ public interface Shop {
 
     void notifyTradeUpdated(ItemStack var1);
 
-    int getVillagerXp();
 
-    void overrideXp(int var1);
 
     boolean showProgressBar();
 
@@ -46,7 +44,7 @@ public interface Shop {
         if (optionalint.isPresent()) {
             ShopOffers shopOffers = this.getOffers();
             if (!shopOffers.isEmpty()) {
-                Services.PLATFORM.sendShopOffers((ServerPlayer) pPlayer,optionalint.getAsInt(), shopOffers, pLevel, this.getVillagerXp(), this.showProgressBar(), this.canRestock());
+                Services.PLATFORM.sendShopOffers((ServerPlayer) pPlayer,optionalint.getAsInt(), shopOffers, pLevel,this.showProgressBar(), this.canRestock());
             }
         }
 

@@ -38,7 +38,8 @@ public interface IPlatformHelper {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
+    void sendSelectedTrade(int trade);
 
-    void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, int pVillagerXp, boolean pShowProgress, boolean pCanRestock);
+    void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, boolean pShowProgress, boolean pCanRestock);
 
 }

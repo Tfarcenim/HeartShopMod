@@ -35,10 +35,16 @@ public class PacketHandler {
                 S2CShopOffersPacket::encode,
                 S2CShopOffersPacket::new,
                 S2CShopOffersPacket::handle);
+
+        INSTANCE.registerMessage(i++,
+                C2SSelectTradePacket.class,
+                C2SSelectTradePacket::encode,
+                C2SSelectTradePacket::new,
+                C2SSelectTradePacket::handle);
     }
 
-    public static void sendContentsForDisplay(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, int pVillagerXp, boolean pShowProgress, boolean pCanRestock) {
-        sendToClient(new S2CShopOffersPacket(pContainerId, pOffers, pVillagerLevel, pVillagerXp, pShowProgress, pCanRestock),player);
+    public static void sendContentsForDisplay(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, boolean pShowProgress, boolean pCanRestock) {
+        sendToClient(new S2CShopOffersPacket(pContainerId, pOffers, pVillagerLevel, pShowProgress, pCanRestock),player);
     }
 
     public static <MSG> void sendToClient(MSG packet, ServerPlayer player) {

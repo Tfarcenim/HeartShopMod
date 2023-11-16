@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import tfar.heartshopmod.platform.Services;
 import tfar.heartshopmod.shop.ShopOffer;
 import tfar.heartshopmod.shop.ShopOffers;
 
@@ -20,7 +21,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     /**
      * The GUI texture for the villager merchant GUI.
      */
-    private static final ResourceLocation VILLAGER_LOCATION = new ResourceLocation(HeartShopMod.MOD_ID,"textures/gui/heart_shop.png");
+    private static final ResourceLocation SHOP_LOCATION = new ResourceLocation(HeartShopMod.MOD_ID,"textures/gui/heart_shop.png");
     private static final int TEXTURE_WIDTH = 512;
     private static final int TEXTURE_HEIGHT = 256;
     private static final int MERCHANT_MENU_PART_X = 99;
@@ -40,8 +41,6 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     private static final int SCROLL_BAR_TOP_POS_Y = 18;
     private static final int SCROLL_BAR_START_X = 94;
     private static final Component TRADES_LABEL = Component.translatable("merchant.trades");
-    private static final Component LEVEL_SEPARATOR = Component.literal(" - ");
-    private static final Component DEPRECATED_TOOLTIP = Component.translatable("merchant.deprecated");
     /**
      * The integer value corresponding to the currently selected merchant recipe.
      */
@@ -58,7 +57,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
 
     private void postButtonClick() {
         this.menu.setSelectionHint(this.shopItem);
-        this.minecraft.getConnection().send(new ServerboundSelectTradePacket(this.shopItem));
+        Services.PLATFORM.sendSelectedTrade(shopItem);
     }
 
     protected void init() {
@@ -120,7 +119,19 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
-        pGuiGraphics.blit(VILLAGER_LOCATION, i, j, 0, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 512, 256);
+        pGuiGraphics.blit(SHOP_LOCATION, i, j, 0, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 512, 256);
+
+        ShopOffers shopOffers = this.menu.getOffers();
+        if (!shopOffers.isEmpty()) {
+            int k = this.shopItem;
+            if (k < 0 || k >= shopOffers.size()) {
+                return;
+            }
+            ShopOffer shopOffer = shopOffers.get(k);
+            if (shopOffer.getCost() > menu.getBalance()) {
+                pGuiGraphics.blit(SHOP_LOCATION, this.leftPos + 83 + 99, this.topPos + 35, 0, 311.0F, 0.0F, 28, 21, 512, 256);
+            }
+        }
     }
 
     private void renderScroller(GuiGraphics pGuiGraphics, int pPosX, int pPosY, ShopOffers pMerchantOffers) {
@@ -134,9 +145,9 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
                 i1 = 113;
             }
 
-            pGuiGraphics.blit(VILLAGER_LOCATION, pPosX + 94, pPosY + 18 + i1, 0, 0.0F, 199.0F, 6, 27, 512, 256);
+            pGuiGraphics.blit(SHOP_LOCATION, pPosX + 94, pPosY + 18 + i1, 0, 0.0F, 199.0F, 6, 27, 512, 256);
         } else {
-            pGuiGraphics.blit(VILLAGER_LOCATION, pPosX + 94, pPosY + 18, 0, 6.0F, 199.0F, 6, 27, 512, 256);
+            pGuiGraphics.blit(SHOP_LOCATION, pPosX + 94, pPosY + 18, 0, 6.0F, 199.0F, 6, 27, 512, 256);
         }
 
     }
@@ -187,7 +198,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
 
     private void renderButtonArrows(GuiGraphics pGuiGraphics, int pPosX, int pPosY) {
         RenderSystem.enableBlend();
-        pGuiGraphics.blit(VILLAGER_LOCATION, pPosX + 5 + 35 + 20, pPosY + 3, 0, 15.0F, 171.0F, 10, 9, 512, 256);
+        pGuiGraphics.blit(SHOP_LOCATION, pPosX + 5 + 35 + 20, pPosY + 3, 0, 15.0F, 171.0F, 10, 9, 512, 256);
     }
 
     private void renderShopCost(GuiGraphics pGuiGraphics, int cost, int pX, int pY) {

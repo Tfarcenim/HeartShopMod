@@ -2,6 +2,7 @@ package tfar.heartshopmod.platform;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.trading.MerchantOffers;
+import tfar.heartshopmod.net.C2SSelectTradePacket;
 import tfar.heartshopmod.net.PacketHandler;
 import tfar.heartshopmod.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
@@ -29,7 +30,12 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, int pVillagerXp, boolean pShowProgress, boolean pCanRestock) {
-        PacketHandler.sendContentsForDisplay(player, pContainerId, pOffers, pVillagerLevel, pVillagerXp, pShowProgress, pCanRestock);
+    public void sendSelectedTrade(int trade) {
+        PacketHandler.sendToServer(new C2SSelectTradePacket(trade));
+    }
+
+    @Override
+    public void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel,boolean pShowProgress, boolean pCanRestock) {
+        PacketHandler.sendContentsForDisplay(player, pContainerId, pOffers, pVillagerLevel,pShowProgress, pCanRestock);
     }
 }
