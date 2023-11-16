@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.Merchant;
@@ -39,7 +40,38 @@ public class DiamondHeartItem extends Item {
         }
     }
 
-    public static class HeartMerchant implements Merchant {
+    public interface Shop {
+        void setTradingPlayer(@javax.annotation.Nullable Player var1);
+
+        @javax.annotation.Nullable
+        Player getTradingPlayer();
+
+        MerchantOffers getOffers();
+
+        void overrideOffers(MerchantOffers var1);
+
+        void notifyTrade(MerchantOffer var1);
+
+        void notifyTradeUpdated(ItemStack var1);
+
+        int getVillagerXp();
+
+        void overrideXp(int var1);
+
+        boolean showProgressBar();
+
+        SoundEvent getNotifyTradeSound();
+
+        default boolean canRestock() {
+            return false;
+        }
+
+
+        boolean isClientSide();
+
+    }
+
+    public static class HeartMerchant implements Shop {
 
         private Player player;
 

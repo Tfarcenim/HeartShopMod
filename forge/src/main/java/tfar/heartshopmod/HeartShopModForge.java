@@ -10,10 +10,12 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.RegisterEvent;
 import tfar.heartshopmod.data.Datagen;
+import tfar.heartshopmod.net.PacketHandler;
 
 @Mod(HeartShopMod.MOD_ID)
 public class HeartShopModForge {
@@ -28,6 +30,7 @@ public class HeartShopModForge {
         HeartShopMod.init();
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::register);
+        bus.addListener(this::setup);
         bus.addListener(Datagen::gather);
         if (FMLEnvironment.dist.isClient()) {
             bus.addListener(Client::renderer);
@@ -35,6 +38,10 @@ public class HeartShopModForge {
         }
 
         MinecraftForge.EVENT_BUS.addListener(this::onDeath);
+    }
+
+    private void setup(FMLCommonSetupEvent event) {
+        PacketHandler.registerMessages();
     }
 
     private void client(FMLClientSetupEvent event) {

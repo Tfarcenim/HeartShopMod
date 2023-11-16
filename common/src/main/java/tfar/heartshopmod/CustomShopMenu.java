@@ -4,13 +4,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.npc.ClientSideMerchant;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffers;
+import tfar.heartshopmod.item.DiamondHeartItem;
+import tfar.heartshopmod.shop.ClientSideShop;
 
 public class CustomShopMenu extends AbstractContainerMenu {
         protected static final int PAYMENT1_SLOT = 0;
@@ -24,19 +25,19 @@ public class CustomShopMenu extends AbstractContainerMenu {
         private static final int SELLSLOT2_X = 162;
         private static final int BUYSLOT_X = 220;
         private static final int ROW_Y = 37;
-        private final Merchant trader;
-        private final MerchantContainer tradeContainer;
+        private final DiamondHeartItem.Shop trader;
+        private final ShopContainer tradeContainer;
         private int merchantLevel;
         private boolean canRestock;
 
         public CustomShopMenu(int pContainerId, Inventory pPlayerInventory) {
-            this(pContainerId, pPlayerInventory, new ClientSideMerchant(pPlayerInventory.player));
+            this(pContainerId, pPlayerInventory, new ClientSideShop(pPlayerInventory.player));
         }
 
-        public CustomShopMenu(int pContainerId, Inventory pPlayerInventory, Merchant pTrader) {
+        public CustomShopMenu(int pContainerId, Inventory pPlayerInventory, DiamondHeartItem.Shop pTrader) {
             super(Init.HEART_SHOP, pContainerId);
             this.trader = pTrader;
-            this.tradeContainer = new MerchantContainer(pTrader);
+            this.tradeContainer = new ShopContainer(pTrader);
             this.addSlot(new CustomShopSlot(pPlayerInventory.player, pTrader, this.tradeContainer, 0, 220, 37));
 
             for(int i = 0; i < 3; ++i) {
