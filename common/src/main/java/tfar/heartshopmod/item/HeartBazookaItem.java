@@ -11,6 +11,8 @@ import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import tfar.heartshopmod.entity.HeartFireball;
 
 public class HeartBazookaItem extends Item {
     public HeartBazookaItem(Properties $$0) {
@@ -22,9 +24,9 @@ public class HeartBazookaItem extends Item {
         ItemStack $$3 = player.getItemInHand(hand);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (!level.isClientSide) {
-            BlockPos blockPos = player.blockPosition();
-            LargeFireball largefireball = new LargeFireball(level, player, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 4);
-            level.addFreshEntity(largefireball);
+            Vec3 look = player.getLookAngle();
+            HeartFireball heartFireball = new HeartFireball(level, player,look.x,look.y,look.z, 4);
+            level.addFreshEntity(heartFireball);
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));
