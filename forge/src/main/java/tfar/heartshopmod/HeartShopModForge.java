@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -38,6 +39,13 @@ public class HeartShopModForge {
         }
 
         MinecraftForge.EVENT_BUS.addListener(this::onDeath);
+        MinecraftForge.EVENT_BUS.addListener(this::clonePlayer);
+    }
+
+    private void clonePlayer(PlayerEvent.Clone event) {
+        Player original = event.getOriginal();
+        Player player = event.getEntity();
+        ((PlayerDuck)player).setHeartCurrency(((PlayerDuck)original).getHeartCurrency());
     }
 
     private void setup(FMLCommonSetupEvent event) {

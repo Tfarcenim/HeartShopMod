@@ -86,6 +86,11 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         pGuiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
         int l = this.font.width(TRADES_LABEL);
         pGuiGraphics.drawString(this.font, TRADES_LABEL, 5 - l / 2 + 48, 6, 4210752, false);
+        ShopOffer shopOffer = shopItem < menu.getOffers().size() ? menu.getOffers().get(shopItem) : null;
+        if (shopOffer != null) {
+            pGuiGraphics.drawString(this.font, shopOffer.getCost() +"", 138, 41, 0xffffff, false);
+            pGuiGraphics.blit(new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png"),138,41,9,9,0,0,9,9,9,9);
+        }
     }
 
     protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
@@ -131,17 +136,15 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
                     pGuiGraphics.pose().pushPose();
                     pGuiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
                     int j1 = k + 2;
-                    this.renderAndDecorateCostA(pGuiGraphics,itemstack, l, j1);
+                    this.renderShopCost(pGuiGraphics,itemstack, l, j1);
 
                     this.renderButtonArrows(pGuiGraphics, i, j1);
                     pGuiGraphics.renderFakeItem(itemstack3, i + 5 + 68, j1);
                     pGuiGraphics.renderItemDecorations(this.font, itemstack3, i + 5 + 68, j1);
                     pGuiGraphics.pose().popPose();
                     k += 20;
-                    ++i1;
-                } else {
-                    ++i1;
                 }
+                ++i1;
             }
 
             for (TradeOfferButton merchantscreen$tradeofferbutton : this.tradeOfferButtons) {
@@ -161,12 +164,12 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     private void renderButtonArrows(GuiGraphics pGuiGraphics, int pPosX, int pPosY) {
         RenderSystem.enableBlend();
         pGuiGraphics.blit(VILLAGER_LOCATION, pPosX + 5 + 35 + 20, pPosY + 3, 0, 15.0F, 171.0F, 10, 9, 512, 256);
-
     }
 
-    private void renderAndDecorateCostA(GuiGraphics pGuiGraphics, int pRealCost, int pX, int pY) {
-     //   pGuiGraphics.renderFakeItem(pRealCost, pX, pY);
-      //  pGuiGraphics.renderItemDecorations(this.font, pRealCost, pX, pY);
+    private void renderShopCost(GuiGraphics pGuiGraphics, int cost, int pX, int pY) {
+        pGuiGraphics.drawString(font,cost +"",pX+3,pY+3,0xffffff);
+     //   pGuiGraphics.renderFakeItem(cost, pX, pY);
+      //  pGuiGraphics.renderItemDecorations(this.font, cost, pX, pY);
 
     }
 
@@ -227,8 +230,8 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         public void renderToolTip(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
             if (this.isHovered && CustomShopScreen.this.menu.getOffers().size() > this.index + CustomShopScreen.this.scrollOff) {
                 if (pMouseX < this.getX() + 20) {
-                    ItemStack itemstack = ItemStack.EMPTY;//CustomShopScreen.this.menu.getOffers().get(this.index + CustomShopScreen.this.scrollOff).getCostA();
-                    pGuiGraphics.renderTooltip(CustomShopScreen.this.font, itemstack, pMouseX, pMouseY);
+                    int cost = CustomShopScreen.this.menu.getOffers().get(this.index + CustomShopScreen.this.scrollOff).getCost();
+                    pGuiGraphics.renderTooltip(CustomShopScreen.this.font, Component.literal(cost+ " Hearts"), pMouseX, pMouseY);
                 } else if (pMouseX < this.getX() + 50 && pMouseX > this.getX() + 30) {
                 } else if (pMouseX > this.getX() + 65) {
                     ItemStack itemstack1 = CustomShopScreen.this.menu.getOffers().get(this.index + CustomShopScreen.this.scrollOff).getResult();

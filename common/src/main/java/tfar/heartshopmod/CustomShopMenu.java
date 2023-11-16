@@ -188,4 +188,8 @@ public class CustomShopMenu extends AbstractContainerMenu {
         public ShopOffers getOffers() {
             return this.trader.getOffers();
         }
+
+    public ShopContainer getTradeContainer() {
+        return tradeContainer;
     }
+}
