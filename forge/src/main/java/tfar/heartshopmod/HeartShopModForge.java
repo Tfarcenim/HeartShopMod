@@ -75,6 +75,8 @@ public class HeartShopModForge {
     private void register(RegisterEvent event) {
         event.register(Registries.ITEM,new ResourceLocation(HeartShopMod.MOD_ID,"diamond_heart"),() -> Init.DIAMOND_HEART);
         event.register(Registries.ITEM,new ResourceLocation(HeartShopMod.MOD_ID,"heart_grenade"),() -> Init.HEART_GRENADE);
+        event.register(Registries.ITEM,new ResourceLocation(HeartShopMod.MOD_ID,"heart_summoner_1"),() -> Init.HEART_SUMMONER_1);
+        event.register(Registries.ITEM,new ResourceLocation(HeartShopMod.MOD_ID,"heart_summoner_2"),() -> Init.HEART_SUMMONER_2);
 
         event.register(Registries.ENTITY_TYPE,new ResourceLocation(HeartShopMod.MOD_ID,"heart_grenade"),() -> Init.HEART_GRENADE_E);
         event.register(Registries.MENU,new ResourceLocation(HeartShopMod.MOD_ID,"heart_shop"),() -> Init.HEART_SHOP);

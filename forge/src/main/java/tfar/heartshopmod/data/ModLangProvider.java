@@ -15,6 +15,9 @@ public class ModLangProvider extends LanguageProvider {
     protected void addTranslations() {
         add(Init.DIAMOND_HEART,"Diamond Heart");
         add(Init.HEART_GRENADE,"Heart Grenade");
+        add(Init.HEART_SUMMONER_1,"Heart Summoner 1");
+        add(Init.HEART_SUMMONER_2,"Heart Summoner 2");
+
         add("container.heart_shop","Heart Shop");
     }
 }

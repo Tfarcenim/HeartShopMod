@@ -1,5 +1,7 @@
 {
   "container.heart_shop": "Heart Shop",
   "item.heartshopmod.diamond_heart": "Diamond Heart",
-  "item.heartshopmod.heart_grenade": "Heart Grenade"
+  "item.heartshopmod.heart_grenade": "Heart Grenade",
+  "item.heartshopmod.heart_summoner_1": "Heart Summoner 1",
+  "item.heartshopmod.heart_summoner_2": "Heart Summoner 2"
 }

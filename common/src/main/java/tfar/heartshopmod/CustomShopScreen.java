@@ -202,7 +202,8 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     }
 
     private void renderShopCost(GuiGraphics pGuiGraphics, int cost, int pX, int pY) {
-        pGuiGraphics.drawString(font,cost +"",pX+3,pY+3,0xffffff);
+        renderHeartTypeWithNumber(pGuiGraphics,0,0,pX+3,pY+4,cost,HeartType.REGULAR,0xffffff);
+        //pGuiGraphics.drawString(font,cost +"",pX+3,pY+3,0xffffff);
      //   pGuiGraphics.renderFakeItem(cost, pX, pY);
       //  pGuiGraphics.renderItemDecorations(this.font, cost, pX, pY);
 
