@@ -20,7 +20,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     /**
      * The GUI texture for the villager merchant GUI.
      */
-    private static final ResourceLocation VILLAGER_LOCATION = new ResourceLocation("textures/gui/container/villager2.png");
+    private static final ResourceLocation VILLAGER_LOCATION = new ResourceLocation(HeartShopMod.MOD_ID,"textures/gui/heart_shop.png");
     private static final int TEXTURE_WIDTH = 512;
     private static final int TEXTURE_HEIGHT = 256;
     private static final int MERCHANT_MENU_PART_X = 99;
@@ -68,9 +68,9 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         int k = j + 16 + 2;
 
         for (int l = 0; l < 7; ++l) {
-            this.tradeOfferButtons[l] = this.addRenderableWidget(new TradeOfferButton(i + 5, k, l, (p_99174_) -> {
-                if (p_99174_ instanceof TradeOfferButton) {
-                    this.shopItem = ((TradeOfferButton) p_99174_).getIndex() + this.scrollOff;
+            this.tradeOfferButtons[l] = this.addRenderableWidget(new TradeOfferButton(i + 5, k, l, (button) -> {
+                if (button instanceof TradeOfferButton tradeOfferButton) {
+                    this.shopItem = tradeOfferButton.getIndex() + this.scrollOff;
                     this.postButtonClick();
                 }
 
