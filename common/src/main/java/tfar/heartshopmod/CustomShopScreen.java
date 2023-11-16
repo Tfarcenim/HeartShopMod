@@ -45,7 +45,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     /**
      * The integer value corresponding to the currently selected merchant recipe.
      */
-    private int shopItem;
+    private int shopItem = -1;
     private final TradeOfferButton[] tradeOfferButtons = new TradeOfferButton[7];
     int scrollOff;
     private boolean isDragging;
@@ -86,11 +86,35 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         pGuiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
         int l = this.font.width(TRADES_LABEL);
         pGuiGraphics.drawString(this.font, TRADES_LABEL, 5 - l / 2 + 48, 6, 4210752, false);
-        ShopOffer shopOffer = shopItem < menu.getOffers().size() ? menu.getOffers().get(shopItem) : null;
+        ShopOffer shopOffer = shopItem >=0 && shopItem < menu.getOffers().size() ? menu.getOffers().get(shopItem) : null;
         if (shopOffer != null) {
-            pGuiGraphics.drawString(this.font, shopOffer.getCost() +"", 138, 41, 0xffffff, false);
-            pGuiGraphics.blit(new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png"),138,41,9,9,0,0,9,9,9,9);
+            renderHeartTypeWithNumber(pGuiGraphics,pMouseX,pMouseY,138,41,shopOffer.getCost(),HeartType.REGULAR, 0xffffff);
         }
+        renderHeartTypeWithNumber(pGuiGraphics,pMouseX,pMouseY,138,20,menu.getBalance(),HeartType.REGULAR,0x404040);
+    }
+
+    protected void renderHeartTypeWithNumber(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, int pX, int pY, int amount, HeartType heartType, int color) {
+        Component component = Component.literal(amount +"");
+        pGuiGraphics.drawString(this.font, component, pX, pY, color, false);
+        int x = heartType.x;
+        int y = heartType.y;
+        pGuiGraphics.blit(heartType.location,pX + font.width(component),pY,x,y,0,0,x,y,x,y);
+    }
+
+    public enum HeartType{
+        REGULAR(9, 9, new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png")),
+        SUPER(11, 11, new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png")),
+        ULTRA(13, 13, new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png"));
+
+        private final int x,y;
+        private final ResourceLocation location;
+        HeartType(int x, int y, ResourceLocation location) {
+            this.x = x;
+            this.y = y;
+
+            this.location = location;
+        }
+
     }
 
     protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
