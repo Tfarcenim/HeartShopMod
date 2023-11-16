@@ -5,6 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.trading.MerchantOffers;
+import tfar.heartshopmod.CustomShopMenu;
 import tfar.heartshopmod.net.util.S2CPacketHelper;
 import tfar.heartshopmod.shop.ShopOffers;
 
@@ -50,12 +51,11 @@ public class S2CShopOffersPacket implements S2CPacketHelper {
     public void handleClient() {
         Minecraft minecraft = Minecraft.getInstance();
         AbstractContainerMenu abstractcontainermenu = minecraft.player.containerMenu;
-        if (containerId == abstractcontainermenu.containerId && abstractcontainermenu instanceof MerchantMenu merchantmenu) {
-            merchantmenu.setOffers(new MerchantOffers(offers.createTag()));
-            merchantmenu.setXp(villagerXp);
-            merchantmenu.setMerchantLevel(villagerLevel);
-            merchantmenu.setShowProgressBar(showProgress);
-            merchantmenu.setCanRestock(canRestock);
+        if (containerId == abstractcontainermenu.containerId && abstractcontainermenu instanceof CustomShopMenu shopMenu) {
+            shopMenu.setOffers(new ShopOffers(offers.createTag()));
+            shopMenu.setXp(villagerXp);
+            shopMenu.setMerchantLevel(villagerLevel);
+            shopMenu.setCanRestock(canRestock);
         }
     }
 }

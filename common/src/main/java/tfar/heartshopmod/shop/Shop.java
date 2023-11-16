@@ -46,7 +46,6 @@ public interface Shop {
         if (optionalint.isPresent()) {
             ShopOffers shopOffers = this.getOffers();
             if (!shopOffers.isEmpty()) {
-
                 Services.PLATFORM.sendShopOffers((ServerPlayer) pPlayer,optionalint.getAsInt(), shopOffers, pLevel, this.getVillagerXp(), this.showProgressBar(), this.canRestock());
             }
         }

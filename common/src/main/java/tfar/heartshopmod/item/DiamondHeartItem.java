@@ -27,6 +27,7 @@ public class DiamondHeartItem extends Item {
             return InteractionResultHolder.success(player.getItemInHand(hand));
         } else {
             HeartShop heartShop = new HeartShop();
+            heartShop.setTradingPlayer(player);
             heartShop.openTradingScreen(player,CONTAINER_TITLE,0);
             return InteractionResultHolder.consume(player.getItemInHand(hand));
         }
