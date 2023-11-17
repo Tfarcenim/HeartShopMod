@@ -37,6 +37,7 @@ public class HeartShopModForge {
         if (FMLEnvironment.dist.isClient()) {
             bus.addListener(Client::renderer);
             bus.addListener(this::client);
+            bus.addListener(Client::registerBar);
         }
 
         MinecraftForge.EVENT_BUS.addListener(this::onDeath);
@@ -60,6 +61,7 @@ public class HeartShopModForge {
 
     private void client(FMLClientSetupEvent event) {
         HeartShopModClient.setup();
+        MinecraftForge.EVENT_BUS.addListener(Client::disableVanillaBar);
     }
 
     private void onDeath(LivingDeathEvent event) {

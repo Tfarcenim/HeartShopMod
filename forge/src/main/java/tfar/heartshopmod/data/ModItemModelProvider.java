@@ -2,8 +2,10 @@ package tfar.heartshopmod.data;
 
 import com.google.gson.JsonElement;
 import net.minecraft.data.models.ItemModelGenerators;
+import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.resources.ResourceLocation;
 import tfar.heartshopmod.HeartShopMod;
+import tfar.heartshopmod.Init;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -16,10 +18,9 @@ public class ModItemModelProvider extends ItemModelGenerators {
 
     @Override
     public void run() {
-        generateLayeredItem(new ResourceLocation(HeartShopMod.MOD_ID,"item/diamond_heart"),
-                new ResourceLocation(HeartShopMod.MOD_ID,"item/heart_background"),new ResourceLocation(HeartShopMod.MOD_ID,"item/red_heart"));
-
-        generateLayeredItem(new ResourceLocation(HeartShopMod.MOD_ID,"item/heart_grenade"),
-                new ResourceLocation(HeartShopMod.MOD_ID,"item/heart_background"),new ResourceLocation(HeartShopMod.MOD_ID,"item/red_heart"));
+        generateFlatItem(Init.DIAMOND_HEART, ModelTemplates.FLAT_ITEM);
+        generateFlatItem(Init.END_TELEPORTER, ModelTemplates.FLAT_ITEM);
+        generateFlatItem(Init.HEART_SUMMONER_1, ModelTemplates.FLAT_ITEM);
+        generateFlatItem(Init.HEART_SUMMONER_2, ModelTemplates.FLAT_ITEM);
     }
 }

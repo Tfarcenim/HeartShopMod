@@ -101,9 +101,7 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
     }
 
     public enum HeartType{
-        REGULAR(9, 9, new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png")),
-        SUPER(11, 11, new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png")),
-        ULTRA(13, 13, new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png"));
+        REGULAR(9, 9, new ResourceLocation(HeartShopMod.MOD_ID,"textures/item/red_heart.png"));
 
         private final int x,y;
         private final ResourceLocation location;

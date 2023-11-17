@@ -1,3 +1,5 @@
-// 1.20.1	2023-11-14T21:13:19.8544694	Model Definitions
-bca3e3e47bb6fb588788f1396dac11ecf57b5adb assets/heartshopmod/models/item/diamond_heart.json
-bca3e3e47bb6fb588788f1396dac11ecf57b5adb assets/heartshopmod/models/item/heart_grenade.json
+// 1.20.1	2023-11-16T21:43:38.0133047	Model Definitions
+c15c65cbf40ec149651e3006ad06b03ec28eeb30 assets/heartshopmod/models/item/diamond_heart.json
+1db21a9aa3f498d735d7b900c3f6f402aba49a1a assets/heartshopmod/models/item/end_teleporter.json
+7aae92e4a4ee6eb6087a2a521354fc068c98a3ec assets/heartshopmod/models/item/heart_summoner_1.json
+a6895d70d8cf86e5dd120e3164af4a2758c01b73 assets/heartshopmod/models/item/heart_summoner_2.json
