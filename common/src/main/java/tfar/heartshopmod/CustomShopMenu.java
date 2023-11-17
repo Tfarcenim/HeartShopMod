@@ -110,9 +110,11 @@ public class CustomShopMenu extends AbstractContainerMenu {
                     }
                     //some purchase is left over
 
-                    int purchased = purchase.getCount() - purchaseCopy.getCount();
-                    int heartCost = purchased * shopOffer.getCost();
-                    playerDuck.addHeartCurrency(-heartCost);
+                    if (!pPlayer.level().isClientSide) {
+                        int purchased = purchase.getCount() - purchaseCopy.getCount();
+                        int heartCost = purchased * shopOffer.getCost();
+                        playerDuck.addHeartCurrency(-heartCost);
+                    }
 
 
                     //slot.onQuickCraft(itemstack1, itemstack);

@@ -16,8 +16,12 @@ public interface PlayerDuck {
     }
 
     default void setHeartCurrency(int hearts) {
-        getPlayer().getAttribute(Attributes.MAX_HEALTH).removePermanentModifier(uuid);
-        getPlayer().getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(create(hearts * 2));
+        Player player = getPlayer();
+        player.getAttribute(Attributes.MAX_HEALTH).removePermanentModifier(uuid);
+        player.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(create(hearts * 2));
+        if (player.getMaxHealth() < player.getHealth()) {
+            player.setHealth(player.getMaxHealth());
+        }
     }
 
     default void reset() {

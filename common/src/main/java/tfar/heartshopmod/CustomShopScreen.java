@@ -6,13 +6,10 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ServerboundSelectTradePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import tfar.heartshopmod.platform.Services;
 import tfar.heartshopmod.shop.ShopOffer;
 import tfar.heartshopmod.shop.ShopOffers;
@@ -247,7 +244,6 @@ public class CustomShopScreen extends AbstractContainerScreen<CustomShopMenu> {
         return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
 
-    @OnlyIn(Dist.CLIENT)
     class TradeOfferButton extends Button {
         final int index;
 

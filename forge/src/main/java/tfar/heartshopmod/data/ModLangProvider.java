@@ -19,6 +19,7 @@ public class ModLangProvider extends LanguageProvider {
         add(Init.HEART_SUMMONER_2,"Heart Summoner 2");
         add(Init.HEART_BAZOOKA,"Heart Bazooka");
         add(Init.END_TELEPORTER,"End Teleporter");
+        add(Init.HEART_SWORD,"Heart Sword");
 
         add("container.heart_shop","Heart Shop");
     }

@@ -1,13 +1,11 @@
 package tfar.heartshopmod.item;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -26,6 +24,7 @@ public class HeartBazookaItem extends Item {
         if (!level.isClientSide) {
             Vec3 look = player.getLookAngle();
             HeartFireball heartFireball = new HeartFireball(level, player,look.x,look.y,look.z, 4);
+            heartFireball.moveTo(heartFireball.getPosition(0).add(0,1,0));
             level.addFreshEntity(heartFireball);
         }
 

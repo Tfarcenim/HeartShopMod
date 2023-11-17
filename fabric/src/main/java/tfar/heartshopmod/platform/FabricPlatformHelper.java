@@ -25,7 +25,12 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, int pVillagerXp, boolean pShowProgress, boolean pCanRestock) {
+    public void sendSelectedTrade(int trade) {
+
+    }
+
+    @Override
+    public void sendShopOffers(ServerPlayer player, int pContainerId, ShopOffers pOffers, int pVillagerLevel, boolean pShowProgress, boolean pCanRestock) {
 
     }
 }

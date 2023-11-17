@@ -86,8 +86,30 @@ public class DiamondHeartItem extends Item {
 
     public static ShopOffers createOffers() {
         ShopOffers shopOffers = new ShopOffers();
-        ShopOffer shopOffer = new ShopOffer(1, Init.HEART_GRENADE.getDefaultInstance(), 0,0,0);
-        shopOffers.add(shopOffer);
+        {
+            ShopOffer shopOffer = new ShopOffer(25, Init.HEART_GRENADE.getDefaultInstance(), 0, 0, 0);
+            shopOffers.add(shopOffer);
+        }
+        {
+            ShopOffer shopOffer = new ShopOffer(100, Init.HEART_SUMMONER_1.getDefaultInstance(), 0, 0, 0);
+            shopOffers.add(shopOffer);
+        }
+        {
+            ShopOffer shopOffer = new ShopOffer(500, Init.HEART_SUMMONER_2.getDefaultInstance(), 0, 0, 0);
+            shopOffers.add(shopOffer);
+        }
+        {
+            ShopOffer shopOffer = new ShopOffer(75, Init.HEART_SWORD.getDefaultInstance(), 0, 0, 0);
+            shopOffers.add(shopOffer);
+        }
+        {
+            ShopOffer shopOffer = new ShopOffer(200, Init.HEART_BAZOOKA.getDefaultInstance(), 0, 0, 0);
+            shopOffers.add(shopOffer);
+        }
+        {
+            ShopOffer shopOffer = new ShopOffer(1250, Init.END_TELEPORTER.getDefaultInstance(), 0, 0, 0);
+            shopOffers.add(shopOffer);
+        }
         return shopOffers;
     }
 
