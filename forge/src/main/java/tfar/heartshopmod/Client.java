@@ -109,44 +109,44 @@ public class Client {
     }
 
     protected static void renderHearts(ForgeGui gui,GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pHeight, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
-        HeartType gui$hearttype = HeartType.forPlayer(pPlayer);
+        HeartType heartType = HeartType.forPlayer(pPlayer);
         int i = 9 * (pPlayer.level().getLevelData().isHardcore() ? 5 : 0);
-        int j = Mth.ceil((double)pMaxHealth / 2.0D);
-        int k = Mth.ceil((double)pAbsorptionAmount / 2.0D);
-        int l = j * 2;
+        int heartContainers = Mth.ceil((double)pMaxHealth / 2.0D);
+        int absorptionContainers = Mth.ceil((double)pAbsorptionAmount / 2.0D);
+        int maxHealth = heartContainers * 2;
 
-        for(int i1 = j + k - 1; i1 >= 0; --i1) {
-            int j1 = i1 / 10;
-            int k1 = i1 % 10;
-            int l1 = pX + k1 * 8;
-            int i2 = pY - j1 * pHeight;
+        for(int index = heartContainers + absorptionContainers - 1; index >= 0; --index) {
+            int heartY = index / 10;
+            int heartX = index % 10;
+            int l1 = pX + heartX * 8;
+            int i2 = pY - heartY * pHeight;
             if (pCurrentHealth + pAbsorptionAmount <= 4) {
                 i2 += gui.random.nextInt(2);
             }
 
-            if (i1 < j && i1 == pOffsetHeartIndex) {
+            if (index < heartContainers && index == pOffsetHeartIndex) {
                 i2 -= 2;
             }
 
             renderHeart(pGuiGraphics, HeartType.CONTAINER, l1, i2, i, pRenderHighlight, false);
-            int j2 = i1 * 2;
-            boolean flag = i1 >= j;
+            int j2 = index * 2;
+            boolean flag = index >= heartContainers;
             if (flag) {
-                int k2 = j2 - l;
+                int k2 = j2 - maxHealth;
                 if (k2 < pAbsorptionAmount) {
-                    boolean flag1 = k2 + 1 == pAbsorptionAmount;
-                    renderHeart(pGuiGraphics, gui$hearttype == HeartType.WITHERED ? gui$hearttype : HeartType.ABSORBING, l1, i2, i, false, flag1);
+                    boolean halfHeart = k2 + 1 == pAbsorptionAmount;
+                    renderHeart(pGuiGraphics, heartType == HeartType.WITHERED ? heartType : HeartType.ABSORBING, l1, i2, i, false, halfHeart);
                 }
             }
 
             if (pRenderHighlight && j2 < pDisplayHealth) {
-                boolean flag2 = j2 + 1 == pDisplayHealth;
-                renderHeart(pGuiGraphics, gui$hearttype, l1, i2, i, true, flag2);
+                boolean halfHeart = j2 + 1 == pDisplayHealth;
+                renderHeart(pGuiGraphics, heartType, l1, i2, i, true, halfHeart);
             }
 
             if (j2 < pCurrentHealth) {
-                boolean flag3 = j2 + 1 == pCurrentHealth;
-                renderHeart(pGuiGraphics, gui$hearttype, l1, i2, i, false, flag3);
+                boolean halfHeart = j2 + 1 == pCurrentHealth;
+                renderHeart(pGuiGraphics, heartType, l1, i2, i, false, halfHeart);
             }
         }
 
