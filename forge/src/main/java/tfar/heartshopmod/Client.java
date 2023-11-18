@@ -3,6 +3,7 @@ package tfar.heartshopmod;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -110,53 +111,52 @@ public class Client {
     protected static void renderHearts(ForgeGui gui,GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pHeight, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
         HeartType gui$hearttype = HeartType.forPlayer(pPlayer);
         int i = 9 * (pPlayer.level().getLevelData().isHardcore() ? 5 : 0);
-        int maxHealthHearts = Mth.ceil((double)pMaxHealth / 2.0D);
-        int absorbHearts = Mth.ceil((double)pAbsorptionAmount / 2.0D);
-        int maxHealth = maxHealthHearts * 2;
+        int j = Mth.ceil((double)pMaxHealth / 2.0D);
+        int k = Mth.ceil((double)pAbsorptionAmount / 2.0D);
+        int l = j * 2;
 
-        int compression = getCompression();
-
-
-
-        int heartContainers = maxHealthHearts / compression;
-        int absorbContainers = absorbHearts / compression;
-        int offsetContainerIndex = pOffsetHeartIndex / compression;
-
-        for(int index = heartContainers + absorbContainers - 1; index >= 0; --index) {
-            int heartY = index / 10;
-            int heartX = index % 10;
-            int l1 = pX + heartX * 8;
-            int i2 = pY - heartY * pHeight;
+        for(int i1 = j + k - 1; i1 >= 0; --i1) {
+            int j1 = i1 / 10;
+            int k1 = i1 % 10;
+            int l1 = pX + k1 * 8;
+            int i2 = pY - j1 * pHeight;
             if (pCurrentHealth + pAbsorptionAmount <= 4) {
                 i2 += gui.random.nextInt(2);
             }
 
-            if (index < heartContainers && index == offsetContainerIndex) {
-//                i2 -= 2;
+            if (i1 < j && i1 == pOffsetHeartIndex) {
+                i2 -= 2;
             }
 
             renderHeart(pGuiGraphics, HeartType.CONTAINER, l1, i2, i, pRenderHighlight, false);
-            int j2 = index * 2;
-            boolean flag = index >= heartContainers;
+            int j2 = i1 * 2;
+            boolean flag = i1 >= j;
             if (flag) {
-                int k2 = j2 - maxHealth;
+                int k2 = j2 - l;
                 if (k2 < pAbsorptionAmount) {
-                    boolean halfHeart = k2 + 1 == pAbsorptionAmount;
-                    renderHeart(pGuiGraphics, gui$hearttype == HeartType.WITHERED ? gui$hearttype : HeartType.ABSORBING, l1, i2, i, false, halfHeart);
+                    boolean flag1 = k2 + 1 == pAbsorptionAmount;
+                    renderHeart(pGuiGraphics, gui$hearttype == HeartType.WITHERED ? gui$hearttype : HeartType.ABSORBING, l1, i2, i, false, flag1);
                 }
             }
 
-            if (pRenderHighlight && j2 < pDisplayHealth/compression) {
-                boolean flag2 = j2 + 1 == pDisplayHealth/compression;
+            if (pRenderHighlight && j2 < pDisplayHealth) {
+                boolean flag2 = j2 + 1 == pDisplayHealth;
                 renderHeart(pGuiGraphics, gui$hearttype, l1, i2, i, true, flag2);
             }
 
-            if (j2 < pCurrentHealth/compression) {
-                boolean flag3 = j2 + 1 == pCurrentHealth/compression;
+            if (j2 < pCurrentHealth) {
+                boolean flag3 = j2 + 1 == pCurrentHealth;
                 renderHeart(pGuiGraphics, gui$hearttype, l1, i2, i, false, flag3);
             }
         }
+
     }
+
+    private static void renderHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart) {
+        pGuiGraphics.blit(GUI_ICONS_LOCATION, pX, pY, pHeartType.getX(pHalfHeart, pRenderHighlight), pYOffset, 9, 9);
+    }
+
+
 
     public static int getCompression() {
         Player player = Minecraft.getInstance().player;
@@ -170,36 +170,6 @@ public class Client {
 
     private static final Color YELLOW = new Color(1,1,0);
     private static final Color BLUE = new Color(0.1f,0.1f,1);
-
-
-    private static void renderHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart) {
-        if (pHeartType != HeartType.NORMAL) {
-            pGuiGraphics.blit(GUI_ICONS_LOCATION, pX, pY, pHeartType.getX(pHalfHeart, pRenderHighlight), pYOffset, 9, 9);
-        } else {
-            //Draw tinted white heart
-
-            Color color = getCompression() == 100 ? BLUE : YELLOW;
-
-            int w = pHalfHeart ? 5 : 9;
-
-            setColor(color.r, color.g, color.b,PASS_ONE_ALPHA);
-            drawTexturedModalRect(pGuiGraphics, pX, pY, 0, 0, w, 9);
-
-            //Second pass dark highlights
-            setColor(color.r, color.g, color.b, PASS_TWO_ALPHA);
-            drawTexturedModalRect(pGuiGraphics, pX, pY, 0, 9, w, 9);
-
-            if (Minecraft.getInstance().player.level().getLevelData().isHardcore()) {
-                setColor(1, 1, 1, PASS_FOUR_ALPHA);
-                drawTexturedModalRect(pGuiGraphics, pX, pY, 0, 18, w, 9);
-            } else {
-                //white dot
-                setColor(1.0F, 1, 1.0F, PASS_THREE_ALPHA);
-                drawTexturedModalRect(pGuiGraphics, pX, pY, 27, 0, w, 9);
-            }
-            setColor(1,1,1,1);
-        }
-    }
 
     public static void drawTexturedModalRect(GuiGraphics stack,int x, int y, int textureX, int textureY, int width, int height) {
         stack.blit(new ResourceLocation(HeartShopMod.MOD_ID,"textures/gui/health.png"),x, y, textureX, textureY, width, height);

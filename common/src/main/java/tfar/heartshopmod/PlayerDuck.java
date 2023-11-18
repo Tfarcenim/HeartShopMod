@@ -1,26 +1,19 @@
 package tfar.heartshopmod;
 
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.UUID;
 
 public interface PlayerDuck {
 
-    UUID uuid = UUID.fromString("547f2d4a-8238-40ff-8cc1-b9d69883bf9b");
-
     default int getHeartCurrency() {
-        AttributeModifier modifier = getPlayer().getAttribute(Attributes.MAX_HEALTH).getModifier(uuid);
-        return modifier != null ? (int) (modifier.getAmount() / 2) : 0;
+        return (int) getPlayer().getAbsorptionAmount()/2;
     }
 
     default void setHeartCurrency(int hearts) {
-        Player player = getPlayer();
-        player.getAttribute(Attributes.MAX_HEALTH).removePermanentModifier(uuid);
-        player.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(create(hearts * 2));
-        if (player.getMaxHealth() < player.getHealth()) {
-            player.setHealth(player.getMaxHealth());
+        if (!getPlayer().level().isClientSide) {
+            getPlayer().setAbsorptionAmount(hearts * 2);
+        } else {
+            HeartShopMod.LOG.warn("Attempted to modify heart count on client");
+            new Throwable().printStackTrace();
         }
     }
 
@@ -36,7 +29,4 @@ public interface PlayerDuck {
         return (Player) this;
     }
 
-    static AttributeModifier create(double health) {
-        return new AttributeModifier(uuid,"HeartShopMod",health, AttributeModifier.Operation.ADDITION);
-    }
 }
