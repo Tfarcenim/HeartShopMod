@@ -3,7 +3,6 @@ package tfar.heartshopmod;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +21,7 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 public class Client {
 
     public static void renderer(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(Init.HEART_GRENADE_E,ThrownItemRenderer::new);
+        event.registerEntityRenderer(Init.HEART_GRENADE_E, ThrownItemRenderer::new);
         event.registerEntityRenderer(Init.HEART_FIREBALL, (context) -> new ThrownItemRenderer<>(context, 1.0F, true));
 
     }
@@ -35,7 +34,7 @@ public class Client {
     private static final float PASS_SIX_ALPHA = 0.20F;//< 0.66
 
     public static void registerBar(RegisterGuiOverlaysEvent e) {
-        e.registerBelow(VanillaGuiOverlay.PLAYER_HEALTH.id(),HeartShopMod.MOD_ID, HEALTH);
+        e.registerBelow(VanillaGuiOverlay.PLAYER_HEALTH.id(), HeartShopMod.MOD_ID, HEALTH);
     }
 
     public static void disableVanillaBar(RenderGuiOverlayEvent e) {
@@ -45,15 +44,13 @@ public class Client {
     }
 
     public static final IGuiOverlay HEALTH = ((gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
-        if (!gui.getMinecraft().options.hideGui && gui.shouldDrawSurvivalElements() && useCompressedBar(gui.getMinecraft()))
-        {
+        if (!gui.getMinecraft().options.hideGui && gui.shouldDrawSurvivalElements() && useCompressedBar(gui.getMinecraft())) {
             gui.setupOverlayRenderState(true, false);
-            renderHealth(gui,screenWidth, screenHeight, guiGraphics);
+            renderHealth(gui, screenWidth, screenHeight, guiGraphics);
         }
     });
 
-    public static void renderHealth(ForgeGui gui,int width, int height, GuiGraphics guiGraphics)
-    {
+    public static void renderHealth(ForgeGui gui, int width, int height, GuiGraphics guiGraphics) {
         gui.getMinecraft().getProfiler().push("health");
         RenderSystem.enableBlend();
 
@@ -61,19 +58,15 @@ public class Client {
         int health = Mth.ceil(player.getHealth());
         boolean highlight = gui.healthBlinkTime > (long) gui.getGuiTicks() && (gui.healthBlinkTime - (long) gui.getGuiTicks()) / 3L % 2L == 1L;
 
-        if (health < gui.lastHealth && player.invulnerableTime > 0)
-        {
+        if (health < gui.lastHealth && player.invulnerableTime > 0) {
             gui.lastHealthTime = Util.getMillis();
             gui.healthBlinkTime = gui.getGuiTicks() + 20;
-        }
-        else if (health > gui.lastHealth && player.invulnerableTime > 0)
-        {
+        } else if (health > gui.lastHealth && player.invulnerableTime > 0) {
             gui.lastHealthTime = Util.getMillis();
             gui.healthBlinkTime = gui.getGuiTicks() + 10;
         }
 
-        if (Util.getMillis() - gui.lastHealthTime > 1000L)
-        {
+        if (Util.getMillis() - gui.lastHealthTime > 1000L) {
             gui.lastHealth = health;
             gui.displayHealth = health;
             gui.lastHealthTime = Util.getMillis();
@@ -86,36 +79,204 @@ public class Client {
         float healthMax = Math.max((float) attrMaxHealth.getValue(), Math.max(healthLast, health));
         int absorb = Mth.ceil(player.getAbsorptionAmount());
 
-        int healthRows = Mth.ceil((healthMax + absorb) / 2.0F / 10.0F);
-        int rowHeight = Math.max(10 - (healthRows - 2), 3);
 
         gui.random.setSeed(gui.getGuiTicks() * 312871L);
 
         int left = width / 2 - 91;
         int top = height - gui.leftHeight;
-        gui.leftHeight += (healthRows * rowHeight);
-        if (rowHeight != 10) gui.leftHeight += 10 - rowHeight;
+
 
         int regen = -1;
-        if (player.hasEffect(MobEffects.REGENERATION))
-        {
+        if (player.hasEffect(MobEffects.REGENERATION)) {
             regen = gui.getGuiTicks() % Mth.ceil(healthMax + 5.0F);
         }
 
-        renderHearts(gui,guiGraphics, player, left, top, rowHeight, regen, healthMax, health, healthLast, absorb, highlight);
+        renderCustomHearts(gui, guiGraphics, player, left, top, regen, healthMax, health, healthLast, absorb, highlight);
 
         RenderSystem.disableBlend();
         gui.getMinecraft().getProfiler().pop();
     }
 
-    protected static void renderHearts(ForgeGui gui,GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pHeight, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
+    static int getabsorbRows(int absorb) {
+        if (absorb <= 0) {
+            return 0;
+        } else if (absorb <= 20) {
+            return 1;
+        } else if (absorb <= 200) {
+            return 2;
+        } else {
+            return 2 + Mth.ceil(absorb / 2000d);
+        }
+    }
+
+    static int[] getAbsorptionCompression(int absorb) {
+        if (absorb <= 20) {
+            return new int[]{absorb, 0, 0};
+        } else if (absorb <= 200) {
+            int tens = (absorb / 20) * 2;
+            int ones = absorb - tens * 10;
+            return new int[]{ones, tens, 0};
+        }
+        int hundreds = (absorb / 200) * 2;
+        int tens = ((absorb - hundreds * 100) / 20) * 2;
+        int ones = absorb - tens * 10 - hundreds * 100;
+        return new int[]{ones, tens, Math.min(hundreds,40)};
+    }
+
+    protected static void renderCustomHearts(ForgeGui gui, GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
+        HeartType heartType = HeartType.forPlayer(pPlayer);
+        int yOffset = 9 * (pPlayer.level().getLevelData().isHardcore() ? 5 : 0);
+        int heartContainers = Mth.ceil((double) pMaxHealth / 2.0D);
+
+        //render health first
+        for (int index = 0; index < heartContainers; index++) {
+            int indexY = index / 10;
+            int indexX = index % 10;
+            int xPos = pX + indexX * 8;
+            int yPos = pY - indexY * 8;
+            //render background
+            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+            HeartFill heartFill = getFill(pCurrentHealth, index);
+            if (heartFill == HeartFill.FULL) {
+                renderHeart(pGuiGraphics, heartType, xPos, yPos, 0, pRenderHighlight, false);
+            } else if (heartFill == HeartFill.HALF) {
+                renderHeart(pGuiGraphics, heartType, xPos, yPos, 0, pRenderHighlight, true);
+            }
+        }
+
+
+        for (int index = 0; index < heartContainers; index++) {
+            int indexY = index / 10;
+            int indexX = index % 10;
+            int xPos = pX + indexX * 8;
+            int yPos = pY - indexY * 8;
+            //render background
+            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+            HeartFill heartFill = getFill(pCurrentHealth, index);
+            if (heartFill == HeartFill.FULL) {
+                renderHeart(pGuiGraphics, heartType, xPos, yPos, 0, pRenderHighlight, false);
+            } else if (heartFill == HeartFill.HALF) {
+                renderHeart(pGuiGraphics, heartType, xPos, yPos, 0, pRenderHighlight, true);
+            }
+        }
+
+        int healthRows = Mth.ceil(pMaxHealth / 20);
+        int rowHeight = 10;
+        gui.leftHeight += healthRows * rowHeight;
+
+
+        int y2 = pY - healthRows * rowHeight;
+
+        int[] compressedAbsorptionContainers = getAbsorptionCompression(Mth.ceil(pAbsorptionAmount));//0 is 1s, 1 is 10s, 2 is 100s
+
+        int row1Absorb = compressedAbsorptionContainers[0];
+
+        for (int index = 0; index < Mth.ceil(row1Absorb / 2f); index++) {
+            int indexY = index / 10;
+            int indexX = index % 10;
+            int xPos = pX + indexX * 8;
+            int yPos = y2 - indexY * 8;
+            //render background
+            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+            HeartFill heartFill = getFill(row1Absorb, index);
+            if (heartFill == HeartFill.FULL) {
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.RED);
+            } else if (heartFill == HeartFill.HALF) {
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.RED);
+            }
+        }
+
+        int row2Absorb = compressedAbsorptionContainers[1];
+
+        for (int index = 0; index < Mth.ceil(row2Absorb / 2f); index++) {
+            int indexY = index / 10;
+            int indexX = index % 10;
+            int xPos = pX + indexX * 8;
+            int yPos = y2 - indexY * 8 - 10;
+            //render background
+            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+            HeartFill heartFill = getFill(row2Absorb, index);
+            if (heartFill == HeartFill.FULL) {
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.YELLOW);
+            } else if (heartFill == HeartFill.HALF) {
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.YELLOW);
+            }
+        }
+
+        int row3Absorb = compressedAbsorptionContainers[2];
+
+        for (int index = 0; index < Mth.ceil(row3Absorb / 2f); index++) {
+            int indexY = index / 10;
+            int indexX = index % 10;
+            int xPos = pX + indexX * 8;
+            int yPos = y2 - indexY * 8 - 20;
+            //render background
+            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+            HeartFill heartFill = getFill(row3Absorb, index);
+            if (heartFill == HeartFill.FULL) {
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.BLUE);
+            } else if (heartFill == HeartFill.HALF) {
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.BLUE);
+            }
+        }
+
+        int absorbRows = 0;
+        if (compressedAbsorptionContainers[2] > 0) {
+            absorbRows = Mth.ceil(compressedAbsorptionContainers[2]/20d) + 2;
+        } else if (compressedAbsorptionContainers[1]> 0) {
+            absorbRows = 2;
+        } else if (compressedAbsorptionContainers[0] > 0) {
+            absorbRows = 1;
+        }
+
+        gui.leftHeight += absorbRows * 10;
+    }
+
+    public static HeartFill getFill(int current, int index) {
+        if (index * 2 > current) {
+            return HeartFill.NONE;
+        } else if (current == index * 2 + 1) {
+            return HeartFill.HALF;
+        } else return HeartFill.FULL;
+    }
+
+    enum HeartFill {
+        NONE, HALF, FULL;
+    }
+
+
+    private static void renderHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart) {
+        pGuiGraphics.blit(GUI_ICONS_LOCATION, pX, pY, pHeartType.getX(pHalfHeart, pRenderHighlight), pYOffset, 9, 9);
+    }
+
+    private static void renderTintedHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int v,
+                                          boolean pRenderHighlight, boolean pHalfHeart,Color color) {
+        setColor(color.r,color.g,color.b,1);
+
+        int w = pHalfHeart ? 5 : 9;
+
+        //Draw tinted white heart
+        setColor(color.r,color.g,color.b, PASS_ONE_ALPHA);
+        drawTexturedModalRect(pGuiGraphics, pX, pY, 0, 0, w, 9);
+
+        //Second pass dark highlights
+        setColor(color.r,color.g,color.b, PASS_TWO_ALPHA);
+        drawTexturedModalRect(pGuiGraphics, pX, pY, 0, 9, w, 9);
+
+        //third pass dot highlight
+        setColor(1.0F, 1.0F, 1.0F, PASS_SIX_ALPHA);
+        drawTexturedModalRect(pGuiGraphics, pX, pY, 27, 0, w, 9);
+        setColor(1,1,1,1);
+    }
+
+    protected static void renderHearts(ForgeGui gui, GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pHeight, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
         HeartType heartType = HeartType.forPlayer(pPlayer);
         int i = 9 * (pPlayer.level().getLevelData().isHardcore() ? 5 : 0);
-        int heartContainers = Mth.ceil((double)pMaxHealth / 2.0D);
-        int absorptionContainers = Mth.ceil((double)pAbsorptionAmount / 2.0D);
+        int heartContainers = Mth.ceil((double) pMaxHealth / 2.0D);
+        int absorptionContainers = Mth.ceil((double) pAbsorptionAmount / 2.0D);
         int maxHealth = heartContainers * 2;
 
-        for(int index = heartContainers + absorptionContainers - 1; index >= 0; --index) {
+        for (int index = heartContainers + absorptionContainers - 1; index >= 0; --index) {
             int heartY = index / 10;
             int heartX = index % 10;
             int l1 = pX + heartX * 8;
@@ -152,10 +313,6 @@ public class Client {
 
     }
 
-    private static void renderHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart) {
-        pGuiGraphics.blit(GUI_ICONS_LOCATION, pX, pY, pHeartType.getX(pHalfHeart, pRenderHighlight), pYOffset, 9, 9);
-    }
-
 
 
     public static int getCompression() {
@@ -166,16 +323,20 @@ public class Client {
 
     protected static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
 
-    public record Color(float r,float g,float b) {}
-
-    private static final Color YELLOW = new Color(1,1,0);
-    private static final Color BLUE = new Color(0.1f,0.1f,1);
-
-    public static void drawTexturedModalRect(GuiGraphics stack,int x, int y, int textureX, int textureY, int width, int height) {
-        stack.blit(new ResourceLocation(HeartShopMod.MOD_ID,"textures/gui/health.png"),x, y, textureX, textureY, width, height);
+    public record Color(float r, float g, float b) {
+        public static final Color RED = new Color(1,0,0);
+        public static final Color YELLOW = new Color(1,1,0);
+        public static final Color BLUE = new Color(0,0,1);
     }
 
-    private static void setColor(float r,float g,float b,float a) {
+    private static final Color YELLOW = new Color(1, 1, 0);
+    private static final Color BLUE = new Color(0.1f, 0.1f, 1);
+
+    public static void drawTexturedModalRect(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
+        stack.blit(new ResourceLocation(HeartShopMod.MOD_ID, "textures/gui/health.png"), x, y, textureX, textureY, width, height);
+    }
+
+    private static void setColor(float r, float g, float b, float a) {
         RenderSystem.setShaderColor(r, g, b, a);
     }
 
@@ -229,7 +390,7 @@ public class Client {
     private static boolean useCompressedBar(Minecraft minecraft) {
         Player player = minecraft.player;
         if (player != null) {
-            return player.getMaxHealth() > 40;
+            return player.getAbsorptionAmount() > 0;
         }
         return false;
     }
