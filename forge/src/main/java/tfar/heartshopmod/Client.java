@@ -18,6 +18,9 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Client {
 
     public static void renderer(EntityRenderersEvent.RegisterRenderers event) {
@@ -110,17 +113,19 @@ public class Client {
     }
 
     static int[] getAbsorptionCompression(int absorb) {
-        if (absorb <= 20) {
-            return new int[]{absorb, 0, 0};
-        } else if (absorb <= 200) {
-            int tens = (absorb / 20) * 2;
-            int ones = absorb - tens * 10;
-            return new int[]{ones, tens, 0};
+        int temp = absorb;
+
+        int ones = absorb % 20;
+        temp /=20;
+
+        List<Integer> placed = new ArrayList<>();
+        placed.add(ones);
+        while (temp > 0) {
+            int mod = temp %10;
+            temp /=10;
+            placed.add(mod);
         }
-        int hundreds = (absorb / 200) * 2;
-        int tens = ((absorb - hundreds * 100) / 20) * 2;
-        int ones = absorb - tens * 10 - hundreds * 100;
-        return new int[]{ones, tens, Math.min(hundreds,40)};
+        return placed.stream().mapToInt(Integer::intValue).toArray();
     }
 
     protected static void renderCustomHearts(ForgeGui gui, GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
@@ -194,12 +199,12 @@ public class Client {
             int xPos = pX + indexX * 8;
             int yPos = y2 - indexY * 8 - 10;
             //render background
-            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+          //  renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
             HeartFill heartFill = getFill(row2Absorb, index);
             if (heartFill == HeartFill.FULL) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.YELLOW);
+                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.YELLOW,2);
             } else if (heartFill == HeartFill.HALF) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.YELLOW);
+                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.YELLOW,2);
             }
         }
 
@@ -269,6 +274,26 @@ public class Client {
         setColor(1,1,1,1);
     }
 
+    private static void renderLargeTintedHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int v,
+                                          boolean pRenderHighlight, boolean pHalfHeart,Color color,int scale) {
+        setColor(color.r,color.g,color.b,1);
+
+        int w = pHalfHeart ? 5 : 9;
+
+        //Draw tinted white heart
+        setColor(color.r,color.g,color.b, PASS_ONE_ALPHA);
+        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 0, 0, w, 9,2);
+
+        //Second pass dark highlights
+        setColor(color.r,color.g,color.b, PASS_TWO_ALPHA);
+        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 0, 9, w, 9,2);
+
+        //third pass dot highlight
+        setColor(1.0F, 1.0F, 1.0F, PASS_SIX_ALPHA);
+        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 27, 0, w, 9,2);
+        setColor(1,1,1,1);
+    }
+
     protected static void renderHearts(ForgeGui gui, GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pHeight, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
         HeartType heartType = HeartType.forPlayer(pPlayer);
         int i = 9 * (pPlayer.level().getLevelData().isHardcore() ? 5 : 0);
@@ -332,8 +357,14 @@ public class Client {
     private static final Color YELLOW = new Color(1, 1, 0);
     private static final Color BLUE = new Color(0.1f, 0.1f, 1);
 
-    public static void drawTexturedModalRect(GuiGraphics stack, int x, int y, int textureX, int textureY, int width, int height) {
-        stack.blit(new ResourceLocation(HeartShopMod.MOD_ID, "textures/gui/health.png"), x, y, textureX, textureY, width, height);
+    public static void drawTexturedModalRect(GuiGraphics stack, int x, int y, int u, int v, int width, int height) {
+        stack.blit(new ResourceLocation(HeartShopMod.MOD_ID, "textures/gui/health.png"), x, y, u, v, width, height);
+    }
+
+    //this blit is normally package-private
+    public static void drawLargeTexturedModalRect(GuiGraphics stack, int x, int y, int u, int v, int width, int height,int scale) {
+        stack.blit(new ResourceLocation(HeartShopMod.MOD_ID, "textures/gui/health.png"), x, y,0, u, v,
+                width, height,256,256);
     }
 
     private static void setColor(float r, float g, float b, float a) {
