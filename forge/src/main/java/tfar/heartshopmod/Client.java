@@ -100,18 +100,6 @@ public class Client {
         gui.getMinecraft().getProfiler().pop();
     }
 
-    static int getabsorbRows(int absorb) {
-        if (absorb <= 0) {
-            return 0;
-        } else if (absorb <= 20) {
-            return 1;
-        } else if (absorb <= 200) {
-            return 2;
-        } else {
-            return 2 + Mth.ceil(absorb / 2000d);
-        }
-    }
-
     static int[] getAbsorptionCompression(int absorb) {
         int temp = absorb;
 
@@ -120,15 +108,24 @@ public class Client {
 
         List<Integer> placed = new ArrayList<>();
         placed.add(ones);
-        while (temp > 0) {
-            int mod = temp %10;
-            temp /=10;
-            placed.add(mod);
-        }
+
+        int tens = temp % 10;
+        temp/=10;
+        placed.add(tens);
+
+        int hundreds = temp % 10;
+        temp /=10;
+        placed.add(hundreds);
+
+        int thousands = temp % 10;
+        temp /=10;
+        placed.add(thousands);
 
         while (placed.size() < 4) {
             placed.add(0);
         }
+
+
 
         return placed.stream().mapToInt(Integer::intValue).toArray();
     }
@@ -175,8 +172,6 @@ public class Client {
         gui.leftHeight += healthRows * rowHeight;
 
 
-        int y2 = pY - healthRows * rowHeight;
-
         int[] compressedAbsorptionContainers = getAbsorptionCompression(Mth.ceil(pAbsorptionAmount));//0 is 1s, 1 is 10s, 2 is 100s
 
         int row1Absorb = compressedAbsorptionContainers[0];
@@ -185,63 +180,73 @@ public class Client {
             int indexY = index / 10;
             int indexX = index % 10;
             int xPos = pX + indexX * 8;
-            int yPos = y2 - indexY * 8;
+            int yPos = pY - indexY * 8 - gui.leftHeight +40;
             //render background
             renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
             HeartFill heartFill = getFill(row1Absorb, index);
             if (heartFill == HeartFill.FULL) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.RED);
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.MAGENTA);
             } else if (heartFill == HeartFill.HALF) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.RED);
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.MAGENTA);
             }
+        }
+
+        if (row1Absorb > 0) {
+            gui.leftHeight +=9;
         }
 
         int row2Absorb = compressedAbsorptionContainers[1];
 
-        for (int index = 0; index < Mth.ceil(row2Absorb / 2f); index++) {
+        for (int index = 0; index < Mth.ceil(row2Absorb); index++) {
             int indexY = index / 10;
             int indexX = index % 10;
             int xPos = pX + indexX * 8;
-            int yPos = y2 - indexY * 8 - 10;
+            int yPos = pY - indexY * 8 - gui.leftHeight +40;
             //render background
             renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
-            HeartFill heartFill = getFill(row2Absorb, index);
-            if (heartFill == HeartFill.FULL) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.YELLOW);
-            } else if (heartFill == HeartFill.HALF) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.YELLOW);
-            }
+            renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false, Color.YELLOW);
+        }
+
+        if (row2Absorb > 0) {
+            gui.leftHeight +=9;
         }
 
         int row3Absorb = compressedAbsorptionContainers[2];
 
-        for (int index = 0; index < Mth.ceil(row3Absorb / 2f); index++) {
+        for (int index = 0; index < Mth.ceil(row3Absorb); index++) {
             int scale = 2;
             int indexY = index / 5;
             int indexX = index % 5;
             int xPos = pX + indexX * 8 * scale;
-            int yPos = y2 - indexY * 8 * scale - 30;
+            int yPos = pY - indexY * 8 * scale - gui.leftHeight +30;
 
             //render background
             renderLargeHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false,scale);
-            HeartFill heartFill = getFill(row3Absorb, index);
-            if (heartFill == HeartFill.FULL) {
-                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.BLUE,scale);
-            } else if (heartFill == HeartFill.HALF) {
-                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.BLUE,scale);
-            }
+            renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.CYAN,scale);
         }
 
-        int absorbRows = 0;
-        if (compressedAbsorptionContainers[2] > 0) {
-            absorbRows = Mth.ceil(compressedAbsorptionContainers[2]/20d) + 2;
-        } else if (compressedAbsorptionContainers[1]> 0) {
-            absorbRows = 2;
-        } else if (compressedAbsorptionContainers[0] > 0) {
-            absorbRows = 1;
+        if (row3Absorb > 0) {
+            gui.leftHeight += (row3Absorb > 5 ? 36 : 18);
         }
 
-        gui.leftHeight += absorbRows * 10;
+        int row4Absorb = compressedAbsorptionContainers[3];
+
+        for (int index = 0; index < Mth.ceil(row4Absorb); index++) {
+            int scale = 5;
+            int indexY = index / 2;
+            int indexX = index % 2;
+            int xPos = pX + indexX * 8 * scale;
+            int yPos = pY - indexY * 8 * scale - gui.leftHeight -0;
+
+            //render background
+            renderLargeHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false,scale);
+            renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.BLUE,scale);
+        }
+
+
+        if (row4Absorb> 0) {
+            gui.leftHeight += 45;
+        }
     }
 
     public static HeartFill getFill(int current, int index) {
@@ -294,15 +299,15 @@ public class Client {
 
         //Draw tinted white heart
         setColor(color.r,color.g,color.b, PASS_ONE_ALPHA);
-        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 0, 0, w, 9,2);
+        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 0, 0, w, 9,scale);
 
         //Second pass dark highlights
         setColor(color.r,color.g,color.b, PASS_TWO_ALPHA);
-        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 0, 9, w, 9,2);
+        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 0, 9, w, 9,scale);
 
         //third pass dot highlight
         setColor(1.0F, 1.0F, 1.0F, PASS_SIX_ALPHA);
-        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 27, 0, w, 9,2);
+        drawLargeTexturedModalRect(pGuiGraphics, pX, pY, 27, 0, w, 9,scale);
         setColor(1,1,1,1);
     }
 
@@ -364,8 +369,8 @@ public class Client {
         public static final Color RED = new Color(1,0,0);
         public static final Color YELLOW = new Color(1,1,0);
         public static final Color BLUE = new Color(0,0,1);
-
         public static final Color MAGENTA = new Color(1,0,1);
+        public static final Color CYAN = new Color(0,1,1);
     }
 
     private static final Color YELLOW = new Color(1, 1, 0);
