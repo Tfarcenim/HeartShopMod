@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "heartshopmod:item/heart_sword_2d"
+  }
+}

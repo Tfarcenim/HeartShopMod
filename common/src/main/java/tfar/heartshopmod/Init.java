@@ -19,7 +19,7 @@ public class Init {
     public static final Item HEART_SUMMONER_1 = new HeartSummonerItem(new Item.Properties(),1);
     public static final Item HEART_SUMMONER_2 = new HeartSummonerItem(new Item.Properties(),2);
     public static final Item HEART_BAZOOKA = new HeartBazookaItem(new Item.Properties());
-    public static final Item HEART_SWORD = new SwordItem(Tiers.NETHERITE, 3, -2.4F, new Item.Properties().fireResistant());
+    public static final Item HEART_SWORD = new SwordItem(Tiers.NETHERITE, 3 + 7, -2.4F, new Item.Properties().fireResistant());
     public static final Item END_TELEPORTER = new EndTeleporterItem(new Item.Properties());
 
     public static final EntityType<HeartGrenadeEntity> HEART_GRENADE_E = EntityType.Builder.<HeartGrenadeEntity>of(HeartGrenadeEntity::new, MobCategory.MISC)
