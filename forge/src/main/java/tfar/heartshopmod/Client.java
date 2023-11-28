@@ -262,7 +262,8 @@ public class Client {
     }
 
     private static void renderLargeHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart,int scale) {
-        pGuiGraphics.blit(GUI_ICONS_LOCATION, pX, pY,0, pHeartType.getX(pHalfHeart, pRenderHighlight), pYOffset, 9, 9,256,356);
+        int u = pHeartType.getX(pHalfHeart, pRenderHighlight);
+        pGuiGraphics.blit(GUI_ICONS_LOCATION, pX,pX+ 9 * scale, pY,pY + 9 * scale,0,9, 9, u, pYOffset, 256,256);
     }
 
     private static void renderTintedHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int v,
