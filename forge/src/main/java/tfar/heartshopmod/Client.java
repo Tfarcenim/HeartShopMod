@@ -125,6 +125,11 @@ public class Client {
             temp /=10;
             placed.add(mod);
         }
+
+        while (placed.size() < 4) {
+            placed.add(0);
+        }
+
         return placed.stream().mapToInt(Integer::intValue).toArray();
     }
 
@@ -199,29 +204,31 @@ public class Client {
             int xPos = pX + indexX * 8;
             int yPos = y2 - indexY * 8 - 10;
             //render background
-          //  renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
             HeartFill heartFill = getFill(row2Absorb, index);
             if (heartFill == HeartFill.FULL) {
-                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.YELLOW,2);
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.YELLOW);
             } else if (heartFill == HeartFill.HALF) {
-                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.YELLOW,2);
+                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.YELLOW);
             }
         }
 
         int row3Absorb = compressedAbsorptionContainers[2];
 
         for (int index = 0; index < Mth.ceil(row3Absorb / 2f); index++) {
-            int indexY = index / 10;
-            int indexX = index % 10;
-            int xPos = pX + indexX * 8;
-            int yPos = y2 - indexY * 8 - 20;
+            int scale = 2;
+            int indexY = index / 5;
+            int indexX = index % 5;
+            int xPos = pX + indexX * 8 * scale;
+            int yPos = y2 - indexY * 8 * scale - 30;
+
             //render background
-            renderHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false);
+            renderLargeHeart(pGuiGraphics, HeartType.CONTAINER, xPos, yPos, 0, pRenderHighlight, false,scale);
             HeartFill heartFill = getFill(row3Absorb, index);
             if (heartFill == HeartFill.FULL) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.BLUE);
+                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, false,Color.BLUE,scale);
             } else if (heartFill == HeartFill.HALF) {
-                renderTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.BLUE);
+                renderLargeTintedHeart(pGuiGraphics, HeartType.ABSORBING, xPos, yPos, 0, pRenderHighlight, true,Color.BLUE,scale);
             }
         }
 
@@ -252,6 +259,10 @@ public class Client {
 
     private static void renderHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart) {
         pGuiGraphics.blit(GUI_ICONS_LOCATION, pX, pY, pHeartType.getX(pHalfHeart, pRenderHighlight), pYOffset, 9, 9);
+    }
+
+    private static void renderLargeHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart,int scale) {
+        pGuiGraphics.blit(GUI_ICONS_LOCATION, pX, pY,0, pHeartType.getX(pHalfHeart, pRenderHighlight), pYOffset, 9, 9,256,356);
     }
 
     private static void renderTintedHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int v,
@@ -352,6 +363,8 @@ public class Client {
         public static final Color RED = new Color(1,0,0);
         public static final Color YELLOW = new Color(1,1,0);
         public static final Color BLUE = new Color(0,0,1);
+
+        public static final Color MAGENTA = new Color(1,0,1);
     }
 
     private static final Color YELLOW = new Color(1, 1, 0);
@@ -363,8 +376,8 @@ public class Client {
 
     //this blit is normally package-private
     public static void drawLargeTexturedModalRect(GuiGraphics stack, int x, int y, int u, int v, int width, int height,int scale) {
-        stack.blit(new ResourceLocation(HeartShopMod.MOD_ID, "textures/gui/health.png"), x, y,0, u, v,
-                width, height,256,256);
+        stack.blit(new ResourceLocation(HeartShopMod.MOD_ID, "textures/gui/health.png"), x,x+width * scale, y,y+height * scale,
+                0, width, height, u, v,256,256);
     }
 
     private static void setColor(float r, float g, float b, float a) {
